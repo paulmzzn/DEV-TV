@@ -19,9 +19,6 @@ const ManagementPanel = () => {
 
   const updateCardColumn = async (cardId, newColumnId) => {
     try {
-      console.log(`Envoi de la requête PATCH pour la carte : ${cardId}`);
-      console.log('Nouvelle colonne ID :', newColumnId);
-  
       const res = await fetch(`http://localhost:3000/cards/${cardId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -29,14 +26,12 @@ const ManagementPanel = () => {
       });
   
       if (!res.ok) {
-        console.error(`Erreur serveur, code : ${res.status}`);
         const errorDetails = await res.json();
-        console.error('Détails de l\'erreur :', errorDetails);
+        console.error('Erreur lors de la mise à jour :', errorDetails);
         throw new Error('Failed to update card column');
       }
   
-      const updatedCard = await res.json();
-      console.log('Carte mise à jour avec succès :', updatedCard);
+      console.log(`Carte ${cardId} mise à jour vers la colonne ${newColumnId}`);
     } catch (error) {
       console.error('Erreur lors de la mise à jour de la colonne de la carte :', error);
     }
@@ -114,45 +109,62 @@ const ManagementPanel = () => {
     }
   };
 
-
   const handleDragStart = (e, cardId) => {
     e.dataTransfer.setData('text/plain', cardId);
   };
 
-  const handleDrop = (e, newColumnId) => {
+  const handleDrop = async (e, newColumnId) => {
     e.preventDefault();
     const cardId = e.dataTransfer.getData('text/plain');
   
-    // Mise à jour dans l'état local
-    const updatedColumns = columns.map((column) => {
-      if (column.cards.some((card) => card._id === cardId)) {
-        return { 
-          ...column, 
-          cards: column.cards.filter((card) => card._id !== cardId) 
-        };
-      }
-      if (column._id === newColumnId) {
-        return { 
-          ...column, 
-          cards: [...column.cards, { ...columns.flatMap((col) => col.cards).find((card) => card._id === cardId) }]
-        };
-      }
-      return column;
-    });
+    // Trouver la carte et la colonne d'origine
+    const sourceColumn = columns.find((column) =>
+      column.cards.some((card) => card._id === cardId)
+    );
   
-    setColumns(updatedColumns);
+    if (!sourceColumn) return; // Si la colonne source n'est pas trouvée, arrêter
   
-    // Mise à jour sur le serveur
-    updateCardColumn(cardId, newColumnId);
+    // Trouver la carte
+    const cardToMove = sourceColumn.cards.find((card) => card._id === cardId);
+  
+    if (!cardToMove) return; // Si la carte n'est pas trouvée, arrêter
+  
+    // Mettre à jour la colonne dans la base de données
+    try {
+      await updateCardColumn(cardId, newColumnId);
+  
+      // Mettre à jour l'état local
+      const updatedColumns = columns.map((column) => {
+        if (column._id === sourceColumn._id) {
+          // Retirer la carte de l'ancienne colonne
+          return {
+            ...column,
+            cards: column.cards.filter((card) => card._id !== cardId),
+          };
+        }
+        if (column._id === newColumnId) {
+          // Ajouter la carte à la nouvelle colonne
+          return {
+            ...column,
+            cards: [...column.cards, { ...cardToMove, columnId: newColumnId }],
+          };
+        }
+        return column; // Ne pas modifier les autres colonnes
+      });
+  
+      setColumns(updatedColumns);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de la colonne :", error);
+    }
   };
-
+  
   const handleDragOver = (e) => {
     e.preventDefault(); // Permet de déposer l'élément
   };
 
   return (
     <div className="management-panel">
-      <button onClick={() => addColumn()}>Add Column</button>
+      <button onClick={addColumn}>Add Column</button>
       <div className="columns">
         {columns.map((column) => (
           <div
@@ -175,7 +187,7 @@ const ManagementPanel = () => {
                   key={card._id}
                   className="card"
                   draggable // Rendre la carte déplaçable
-                  onDragStart={(e) => handleDragStart(e, card._id, column._id)} // Début du drag
+                  onDragStart={(e) => handleDragStart(e, card._id)} // Début du drag
                 >
                   {card.content}
                   <button

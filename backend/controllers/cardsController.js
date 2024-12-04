@@ -34,40 +34,39 @@ const createCard = async (req, res) => {
 // Mettre à jour une carte existante
 const updateCard = async (req, res) => {
     try {
-      const { id } = req.params; // Récupération de l'ID de la carte à mettre à jour
-      const { columnId, ...updateData } = req.body; // Extraction de l'ID de colonne et des autres données de la requête
-  
-      console.log(`Requête reçue pour mettre à jour la carte ${id}`);
-      console.log('Nouvelle colonne ID:', columnId);
-      console.log('Données supplémentaires:', updateData);
+      const { id } = req.params;
+      const { columnId } = req.body;
   
       if (!columnId) {
-        console.error('columnId manquant dans la requête');
         return res.status(400).json({ error: 'Column ID is required' });
       }
   
-      // Mise à jour de la carte dans la base de données
-      const updatedCard = await Card.findByIdAndUpdate(
-        id,
-        { columnId, ...updateData }, // Mise à jour de la colonne et d'autres champs éventuels
-        { new: true } // Retourner le document mis à jour
-      );
-  
-      console.log('Carte après mise à jour:', updatedCard);
-  
-      if (!updatedCard) {
-        console.error('Carte non trouvée pour mise à jour');
+      const card = await Card.findById(id);
+      if (!card) {
         return res.status(404).json({ error: 'Card not found' });
       }
   
-      // Vérification et retour de la réponse
-      console.log(`Carte mise à jour avec succès. Nouvelle colonne : ${updatedCard.columnId}`);
-      res.status(200).json({
-        message: 'Card updated successfully',
-        card: updatedCard,
-      });
+      // Retirer la carte de l'ancienne colonne
+      const oldColumn = await Column.findById(card.columnId);
+      if (oldColumn) {
+        oldColumn.cards = oldColumn.cards.filter((cardId) => cardId.toString() !== id);
+        await oldColumn.save();
+      }
+  
+      // Ajouter la carte à la nouvelle colonne
+      const newColumn = await Column.findById(columnId);
+      if (newColumn) {
+        newColumn.cards.push(id);
+        await newColumn.save();
+      }
+  
+      // Mettre à jour la colonne de la carte
+      card.columnId = columnId;
+      await card.save();
+  
+      res.status(200).json(card);
     } catch (error) {
-      console.error('Erreur lors de la mise à jour de la carte:', error);
+      console.error('Erreur lors de la mise à jour de la carte :', error);
       res.status(500).json({ error: 'Error updating card' });
     }
   };
