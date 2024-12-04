@@ -3,6 +3,9 @@ import '../styles/management.css';
 
 const ManagementPanel = () => {
   const [columns, setColumns] = useState([]);
+  const [showCardForm, setShowCardForm] = useState(false); // État pour afficher/masquer la popup
+  const [currentColumnId, setCurrentColumnId] = useState(null); // Colonne cible pour la nouvelle carte
+  const [cardData, setCardData] = useState({ title: '', content: '', link: '' }); // Données du formulaire
 
   useEffect(() => {
     const fetchColumns = async () => {
@@ -17,28 +20,10 @@ const ManagementPanel = () => {
     fetchColumns();
   }, []);
 
-  const updateCardColumn = async (cardId, newColumnId) => {
-    try {
-      const res = await fetch(`http://localhost:3000/cards/${cardId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ columnId: newColumnId }),
-      });
-  
-      if (!res.ok) {
-        const errorDetails = await res.json();
-        console.error('Erreur lors de la mise à jour :', errorDetails);
-        throw new Error('Failed to update card column');
-      }
-  
-      console.log(`Carte ${cardId} mise à jour vers la colonne ${newColumnId}`);
-    } catch (error) {
-      console.error('Erreur lors de la mise à jour de la colonne de la carte :', error);
-    }
-  };
-
   const addColumn = async () => {
     const title = prompt('Enter column title:');
+    if (!title) return;
+
     const res = await fetch('http://localhost:3000/columns', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -49,17 +34,25 @@ const ManagementPanel = () => {
   };
 
   const deleteColumn = async (id) => {
-    await fetch(`http://localhost:3000/columns/${id}`, { method: 'DELETE' });
-    setColumns(columns.filter((column) => column._id !== id));
+    try {
+      await fetch(`http://localhost:3000/columns/${id}`, { method: 'DELETE' });
+      setColumns(columns.filter((column) => column._id !== id));
+    } catch (error) {
+      console.error('Erreur lors de la suppression de la colonne:', error);
+    }
   };
 
-  const addCard = async (columnId) => {
-    const content = prompt('Enter card content:');
-    if (!content) return;  // Si aucun contenu n'est saisi, ne pas continuer
+  const addCard = async () => {
+    if (!cardData.title || !cardData.content) {
+      alert('Veuillez remplir tous les champs.');
+      return;
+    }
 
     const newCardData = {
-      content,
-      columnId
+      title: cardData.title,
+      content: cardData.content,
+      columnId: currentColumnId,
+      link: cardData.link,  // Ajouter le lien ici
     };
 
     try {
@@ -72,16 +65,18 @@ const ManagementPanel = () => {
       const newCard = await res.json();
 
       const updatedColumns = columns.map((column) => {
-        if (column._id === columnId) {
-          return { 
-            ...column, 
-            cards: [...column.cards, newCard] 
+        if (column._id === currentColumnId) {
+          return {
+            ...column,
+            cards: [...column.cards, newCard],
           };
         }
         return column;
       });
 
       setColumns(updatedColumns);
+      setShowCardForm(false);
+      setCardData({ title: '', content: '', link: '' }); // Réinitialiser les données
     } catch (error) {
       console.error('Erreur lors de l\'ajout de la carte:', error);
     }
@@ -89,21 +84,19 @@ const ManagementPanel = () => {
 
   const deleteCard = async (columnId, cardId) => {
     try {
-      await fetch(`http://localhost:3000/cards/${cardId}`, {
-        method: 'DELETE',
-      });
+      await fetch(`http://localhost:3000/cards/${cardId}`, { method: 'DELETE' });
 
       const updatedColumns = columns.map((column) => {
         if (column._id === columnId) {
-          return { 
-            ...column, 
-            cards: column.cards.filter((card) => card._id !== cardId) 
+          return {
+            ...column,
+            cards: column.cards.filter((card) => card._id !== cardId),
           };
         }
         return column;
       });
 
-      setColumns(updatedColumns); // Mise à jour de l'état des colonnes après suppression
+      setColumns(updatedColumns);
     } catch (error) {
       console.error('Erreur lors de la suppression de la carte:', error);
     }
@@ -116,50 +109,63 @@ const ManagementPanel = () => {
   const handleDrop = async (e, newColumnId) => {
     e.preventDefault();
     const cardId = e.dataTransfer.getData('text/plain');
-  
-    // Trouver la carte et la colonne d'origine
+
     const sourceColumn = columns.find((column) =>
       column.cards.some((card) => card._id === cardId)
     );
-  
-    if (!sourceColumn) return; // Si la colonne source n'est pas trouvée, arrêter
-  
-    // Trouver la carte
+
+    if (!sourceColumn) return;
+
     const cardToMove = sourceColumn.cards.find((card) => card._id === cardId);
-  
-    if (!cardToMove) return; // Si la carte n'est pas trouvée, arrêter
-  
-    // Mettre à jour la colonne dans la base de données
+
+    if (!cardToMove) return;
+
     try {
       await updateCardColumn(cardId, newColumnId);
-  
-      // Mettre à jour l'état local
+
       const updatedColumns = columns.map((column) => {
         if (column._id === sourceColumn._id) {
-          // Retirer la carte de l'ancienne colonne
           return {
             ...column,
             cards: column.cards.filter((card) => card._id !== cardId),
           };
         }
         if (column._id === newColumnId) {
-          // Ajouter la carte à la nouvelle colonne
           return {
             ...column,
             cards: [...column.cards, { ...cardToMove, columnId: newColumnId }],
           };
         }
-        return column; // Ne pas modifier les autres colonnes
+        return column;
       });
-  
+
       setColumns(updatedColumns);
     } catch (error) {
-      console.error("Erreur lors de la mise à jour de la colonne :", error);
+      console.error('Erreur lors de la mise à jour de la colonne:', error);
     }
   };
-  
+
   const handleDragOver = (e) => {
-    e.preventDefault(); // Permet de déposer l'élément
+    e.preventDefault();
+  };
+
+  const updateCardColumn = async (cardId, newColumnId) => {
+    try {
+      const response = await fetch(`http://localhost:3000/cards/${cardId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ columnId: newColumnId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la mise à jour de la carte');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la carte:', error);
+      throw error;
+    }
   };
 
   return (
@@ -171,7 +177,7 @@ const ManagementPanel = () => {
             key={column._id}
             className="column"
             onDragOver={handleDragOver}
-            onDrop={(e) => handleDrop(e, column._id)} // Dépose dans une colonne
+            onDrop={(e) => handleDrop(e, column._id)}
           >
             <h3>{column.title}</h3>
             <button
@@ -181,15 +187,28 @@ const ManagementPanel = () => {
               x
             </button>
             <div className="cards">
-              <button onClick={() => addCard(column._id)}>Add Card +</button>
+              <button
+                onClick={() => {
+                  setCurrentColumnId(column._id);
+                  setShowCardForm(true);
+                }}
+              >
+                Add Card +
+              </button>
               {column.cards.map((card) => (
                 <div
                   key={card._id}
                   className="card"
-                  draggable // Rendre la carte déplaçable
-                  onDragStart={(e) => handleDragStart(e, card._id)} // Début du drag
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, card._id)}
                 >
-                  {card.content}
+                  <h4 className="card-title">{card.title}</h4>
+                  <p className="card-content">{card.content}</p>
+                  {card.link && (
+                    <a href={card.link} target="_blank" rel="noopener noreferrer">
+                      {card.link}
+                    </a>
+                  )}
                   <button
                     className="btndeletecard"
                     onClick={() => deleteCard(column._id, card._id)}
@@ -202,6 +221,41 @@ const ManagementPanel = () => {
           </div>
         ))}
       </div>
+
+      {showCardForm && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h3>Nouvelle Carte</h3>
+            <label>
+              Titre :
+              <input
+                type="text"
+                value={cardData.title}
+                onChange={(e) => setCardData({ ...cardData, title: e.target.value })}
+              />
+            </label>
+            <label>
+              Contenu :
+              <textarea
+                value={cardData.content}
+                onChange={(e) => setCardData({ ...cardData, content: e.target.value })}
+              />
+            </label>
+            <label>
+              Lien :
+              <input
+                type="url"
+                value={cardData.link || ''}
+                onChange={(e) => setCardData({ ...cardData, link: e.target.value })}
+              />
+            </label>
+            <div className="form-actions">
+              <button className="btncancel" onClick={() => setShowCardForm(false)}>Annuler</button>
+              <button onClick={addCard}>Ajouter</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -64,23 +64,39 @@
     margin-top: 10px;
   }
   
-  .card {
-    background: #eee;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    position: relative;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    font-family: Poppins, sans-serif;
-    font-weight: 500;
-    font-size: 0.8em;
-  }
+.card {
+  background: #eee;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: Poppins, sans-serif;
+  font-weight: 500;
+  font-size: 0.8em;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Change de 'space-between' à 'flex-start' */
+  align-items: flex-start;  /* Aligner à gauche */
+  height: 100%;
+}
+
+.card-title {
+  font-weight: bold;
+  text-decoration: underline;
+  text-align: left;  /* Justification à gauche */
+  margin-bottom: 10px;
+  width: 100%;  /* Ajouter cette ligne pour forcer la largeur du titre */
+}
+
+.card-content {
+  text-align: left;  /* Assurez-vous que le texte est bien aligné à gauche */
+  margin-bottom: 15px;
+  width: 100%;  /* Ajouter cette ligne pour forcer la largeur du contenu */
+}
   
-  /* Bouton "Delete Card" */
   .btndeletecard {
-    position: absolute;
-    top: 5px;
-    right: 10px;
+    margin-top: auto;
     padding: 5px 10px;
     background-color: #ff4d4d;
     color: white;
@@ -88,6 +104,7 @@
     border-radius: 3px;
     cursor: pointer;
     font-size: 14px;
+    align-self: flex-end;
   }
   
   .btndeletecard:hover {
@@ -117,4 +134,54 @@
   
   button:active {
     transform: scale(0.98); /* Légère réduction de taille lors du clic pour un effet visuel */
+  }
+
+  .popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  
+  .popup-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .popup-content h3 {
+    margin-top: 0;
+    text-align: center;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  
+  input,
+  textarea {
+    width: 95%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .btncancel {
+    background-color: #dc3545; /* Rouge */
+  }
+
+  .btncancel:hover {
+    background-color: #c82333; /* Rouge foncé pour le hover */
   }

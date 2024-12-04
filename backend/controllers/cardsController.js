@@ -5,31 +5,32 @@ const Card = require('../models/Card');
 
 const createCard = async (req, res) => {
     try {
-      const { content, columnId } = req.body;
-      
-      if (!columnId) {
-        return res.status(400).json({ error: 'columnId is required' });
+      const { title, content, columnId, link } = req.body; // Inclure le lien ici
+
+      if (!title || !content || !columnId) {
+        return res.status(400).json({ error: 'title, content, and columnId are required' });
       }
-  
-      // Créer la carte
-      const card = new Card({ content, columnId });
-  
+
+      // Créer la carte avec le titre, le contenu et le lien
+      const card = new Card({ title, content, columnId, link }); // Ajouter le lien ici
+
       // Sauvegarder la carte
       await card.save();
-  
+
       // Ajouter l'ID de la carte à la colonne correspondante
       const column = await Column.findById(columnId);
       if (column) {
         column.cards.push(card._id); // Ajouter l'ID de la carte à la colonne
         await column.save();
       }
-  
+
       res.status(201).json(card);
+      console.log('Card Data:', { title, content, columnId, link });
     } catch (error) {
       console.error(error);
       res.status(400).json({ error: 'Error creating card' });
     }
-  };
+};
 
 // Mettre à jour une carte existante
 const updateCard = async (req, res) => {

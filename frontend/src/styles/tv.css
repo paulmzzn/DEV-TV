@@ -56,10 +56,10 @@
   
   /* Style des textes des cartes */
   .card p {
-    font-size: 1rem;
+    font-size: 0.9rem;
     line-height: 1.5;
     color: #000000;
-    text-align: center; /* Centre le texte dans les cartes */
+    white-space: pre-line; /* Conserve les retours à la ligne */
   }
   
   /* Media queries pour responsive */
