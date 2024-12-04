@@ -1,0 +1,81 @@
+/* Style de la zone d'affichage de la TV */
+.tv-display {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    background-color: #101010;
+    color: #101010;
+    min-height: 100vh; /* Assurer que l'affichage prenne toute la hauteur */
+    flex-wrap: wrap; /* Permet de gérer l'affichage sur plusieurs lignes si nécessaire */
+  }
+  
+  /* Style pour chaque colonne */
+  .column {
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    min-width: 200px; /* Limite la largeur minimale des colonnes */
+    flex: 1 1 400px; /* Les colonnes se redimensionnent dynamiquement */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrer les cartes à l'intérieur de la colonne */
+  }
+  
+  /* Style pour la section des cartes à l'intérieur des colonnes */
+  .cards {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%; /* Assure que les cartes prennent toute la largeur de la colonne */
+  }
+  
+  /* Style pour chaque carte */
+  .card {
+    background: #333;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Effet de profondeur pour les cartes */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Animation douce */
+  }
+  
+  .card:hover {
+    transform: translateY(-5px); /* Légère élévation au survol */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Ombre plus forte au survol */
+  }
+  
+  /* Style pour les titres des colonnes */
+  .column h2 {
+    font-size: 1.5rem;
+    color: #000000;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  /* Style des textes des cartes */
+  .card p {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #000000;
+    text-align: center; /* Centre le texte dans les cartes */
+  }
+  
+  /* Media queries pour responsive */
+  @media (max-width: 768px) {
+    .tv-display {
+      padding: 10px;
+      flex-direction: column;
+      align-items: center; /* Aligner les colonnes verticalement sur les petits écrans */
+    }
+  
+    .column {
+      width: 80%; /* Colonne plus large sur petits écrans */
+      margin-bottom: 20px;
+    }
+  
+    .card {
+      padding: 15px;
+    }
+  }

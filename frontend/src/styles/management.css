@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
+
+.management-panel {
+    padding: 20px;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .columns {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    
+  }
+  
+  .column {
+    background: #fff;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative; /* Permet de positionner le bouton "Delete" */
+    
+  }
+  
+  .column h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #333;
+    font-family: Poppins, sans-serif;
+    font-weight: 600;
+  }
+  
+  /* Nouveau style pour le bouton Delete Column */
+  .btnDeleteColumn {
+    position: absolute;
+    top: 5px; /* Placer légèrement plus près du haut */
+    right: 5px; /* Placer légèrement plus près du bord droit */
+    width: 22px; /* Largeur du bouton */
+    height: 22px; /* Hauteur du bouton */
+    background-color: #ff4d4d;
+    color: white;
+    font-size: 18px; /* Taille de la croix */
+    font-weight: bold;
+    text-align: center;
+    line-height: 22px; /* Centrer verticalement la croix */
+    border-radius: 50%; /* Rendre le bouton rond */
+    border: none;
+    cursor: pointer;
+    padding: 0; /* Enlever le padding par défaut */
+    display: flex; /* Utilisation de flex pour centrer l'élément */
+    justify-content: center; /* Centrer horizontalement */
+    align-items: center; /* Centrer verticalement */
+  }
+  
+  .btnDeleteColumn:hover {
+    background-color: #ff1a1a;
+  }
+  
+  .cards {
+    margin-top: 10px;
+  }
+  
+  .card {
+    background: #eee;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: Poppins, sans-serif;
+    font-weight: 500;
+    font-size: 0.8em;
+  }
+  
+  /* Bouton "Delete Card" */
+  .btndeletecard {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    padding: 5px 10px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .btndeletecard:hover {
+    background-color: #ff1a1a;
+  }
+  
+  /* Boutons génériques (sans classe spécifique) */
+  button {
+    background-color: #28a745; /* Vert */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Transition douce */
+  }
+  
+  button:hover {
+    background-color: #218838; /* Vert foncé pour le hover */
+  }
+  
+  /* Améliorations supplémentaires */
+  button:focus {
+    outline: none; /* Supprimer le contour bleu par défaut */
+  }
+  
+  button:active {
+    transform: scale(0.98); /* Légère réduction de taille lors du clic pour un effet visuel */
+  }
