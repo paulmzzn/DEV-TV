@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/management.css';
+import '../styles/tv.css';
 
 const ManagementPanel = () => {
   const [columns, setColumns] = useState([]);
   const [showCardForm, setShowCardForm] = useState(false); // État pour afficher/masquer la popup
   const [currentColumnId, setCurrentColumnId] = useState(null); // Colonne cible pour la nouvelle carte
   const [cardData, setCardData] = useState({ title: '', content: '', link: '' }); // Données du formulaire
+  const [showEditCardForm, setShowEditCardForm] = useState(false); // État pour afficher/masquer le formulaire d'édition
+  const [editCardData, setEditCardData] = useState({ title: '', content: '', link: '', cardId: '' }); // Données de la carte à éditer
 
   useEffect(() => {
     const fetchColumns = async () => {
@@ -109,39 +112,59 @@ const ManagementPanel = () => {
   const handleDrop = async (e, newColumnId) => {
     e.preventDefault();
     const cardId = e.dataTransfer.getData('text/plain');
-
+    
+    console.log("Card ID dropped: ", cardId);
+    console.log("Target column ID: ", newColumnId);
+  
     const sourceColumn = columns.find((column) =>
       column.cards.some((card) => card._id === cardId)
     );
-
-    if (!sourceColumn) return;
-
+  
+    if (!sourceColumn) {
+      console.log("Source column not found");
+      return;
+    }
+  
+    console.log("Source column found: ", sourceColumn);
+  
     const cardToMove = sourceColumn.cards.find((card) => card._id === cardId);
-
-    if (!cardToMove) return;
-
+  
+    if (!cardToMove) {
+      console.log("Card to move not found in the source column");
+      return;
+    }
+  
+    console.log("Card to move: ", cardToMove);
+  
     try {
-      await updateCardColumn(cardId, newColumnId);
-
+      // Mise à jour de la carte avec le nouveau columnId
+      console.log("Updating card column...");
+      await updateCardColumn(cardId, newColumnId, cardToMove);
+  
+      // Mettre à jour les colonnes dans le state local
+      console.log("Updating columns in the local state...");
       const updatedColumns = columns.map((column) => {
         if (column._id === sourceColumn._id) {
+          console.log("Removing card from source column: ", sourceColumn._id);
           return {
             ...column,
-            cards: column.cards.filter((card) => card._id !== cardId),
+            cards: column.cards.filter((card) => card._id !== cardId), // Retirer la carte de la colonne source
           };
         }
         if (column._id === newColumnId) {
+          console.log("Adding card to new column: ", newColumnId);
           return {
             ...column,
-            cards: [...column.cards, { ...cardToMove, columnId: newColumnId }],
+            cards: [...column.cards, { ...cardToMove, columnId: newColumnId }], // Ajouter la carte à la nouvelle colonne
           };
         }
         return column;
       });
-
-      setColumns(updatedColumns);
+  
+      console.log("Updated columns: ", updatedColumns);
+      setColumns(updatedColumns); // Mettre à jour l'état local
     } catch (error) {
-      console.error('Erreur lors de la mise à jour de la colonne:', error);
+      console.error('Erreur lors du déplacement de la carte:', error);
     }
   };
 
@@ -149,22 +172,85 @@ const ManagementPanel = () => {
     e.preventDefault();
   };
 
-  const updateCardColumn = async (cardId, newColumnId) => {
+  const updateCardColumn = async (cardId, newColumnId, cardToMove) => {
+    console.log(`Sending update request for card ID: ${cardId} to column ID: ${newColumnId}`);
+  
     try {
       const response = await fetch(`http://localhost:3000/cards/${cardId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ columnId: newColumnId }),
+        body: JSON.stringify({
+          title: cardToMove.title,
+          content: cardToMove.content,
+          link: cardToMove.link,
+          columnId: newColumnId, // Mise à jour du columnId
+        }),
       });
-
+  
       if (!response.ok) {
         throw new Error('Erreur lors de la mise à jour de la carte');
       }
-
+  
+      console.log("Card successfully updated in the database");
       return await response.json();
     } catch (error) {
       console.error('Erreur lors de la mise à jour de la carte:', error);
       throw error;
+    }
+  };
+  
+  const openEditCardForm = (card) => {
+    setEditCardData({ ...card, cardId: card._id });
+    setShowEditCardForm(true);
+  };
+
+  const updateCard = async () => {
+    if (!editCardData.title || !editCardData.content || !editCardData.columnId) {
+      alert('Veuillez remplir tous les champs.');
+      return;
+    }
+  
+    console.log('Données de la carte à mettre à jour:', editCardData); // Log des données envoyées
+  
+    try {
+      const res = await fetch(`http://localhost:3000/cards/${editCardData.cardId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: editCardData.title,
+          content: editCardData.content,
+          link: editCardData.link,
+          columnId: editCardData.columnId, // Ajout du columnId
+        }),
+      });
+  
+      console.log('Réponse de la requête PATCH:', res); // Log de la réponse du serveur
+  
+      if (!res.ok) {
+        const errorData = await res.json(); // Capture les erreurs envoyées par le serveur
+        console.error('Erreur dans la réponse du serveur:', errorData);
+        throw new Error(errorData.error || 'Erreur lors de la mise à jour de la carte');
+      }
+  
+      const updatedCard = await res.json();
+      console.log('Carte mise à jour:', updatedCard); // Log de la carte mise à jour
+  
+      const updatedColumns = columns.map((column) => {
+        if (column.cards.some((card) => card._id === editCardData.cardId)) {
+          return {
+            ...column,
+            cards: column.cards.map((card) =>
+              card._id === editCardData.cardId ? updatedCard : card
+            ),
+          };
+        }
+        return column;
+      });
+  
+      setColumns(updatedColumns);
+      setShowEditCardForm(false);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la carte:', error);
     }
   };
 
@@ -209,12 +295,14 @@ const ManagementPanel = () => {
                       {card.link}
                     </a>
                   )}
-                  <button
-                    className="btndeletecard"
-                    onClick={() => deleteCard(column._id, card._id)}
-                  >
-                    Delete Card
-                  </button>
+                  <div className="card-buttons">
+                    <button className="btnupdatecard" onClick={() => openEditCardForm(card)}>
+                        Update Card
+                    </button>
+                    <button className="btndeletecard" onClick={() => deleteCard(column._id, card._id)}>
+                        Delete Card
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -256,6 +344,40 @@ const ManagementPanel = () => {
           </div>
         </div>
       )}
+      {showEditCardForm && (
+  <div className="popup-overlay">
+    <div className="popup-content">
+      <h3>Modifier la Carte</h3>
+      <label>
+        Titre :
+        <input
+          type="text"
+          value={editCardData.title}
+          onChange={(e) => setEditCardData({ ...editCardData, title: e.target.value })}
+        />
+      </label>
+      <label>
+        Contenu :
+        <textarea
+          value={editCardData.content}
+          onChange={(e) => setEditCardData({ ...editCardData, content: e.target.value })}
+        />
+      </label>
+      <label>
+        Lien :
+        <input
+          type="url"
+          value={editCardData.link || ''}
+          onChange={(e) => setEditCardData({ ...editCardData, link: e.target.value })}
+        />
+      </label>
+      <div className="form-actions">
+        <button className="btncancel" onClick={() => setShowEditCardForm(false)}>Annuler</button>
+        <button onClick={updateCard}>Mettre à Jour</button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };

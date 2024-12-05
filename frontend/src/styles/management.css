@@ -10,21 +10,23 @@
   
   .columns {
     display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    
+    justify-content: center; /* Centre les colonnes horizontalement */
+    gap: 20px; /* Espacement constant entre les colonnes */
+    flex-wrap: wrap; /* Permet de passer à la ligne si nécessaire */
   }
   
   .column {
+    flex: 1; /* Permet aux colonnes de prendre tout l'espace disponible */
+    min-width: 200px; /* Définit une largeur minimale */
     background: #fff;
     padding: 15px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    max-width: 300px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: relative; /* Permet de positionner le bouton "Delete" */
-    
+    position: relative; /* Position pour le bouton "Delete" */
   }
+    
+
   
   .column h3 {
     font-size: 1.2em;
@@ -184,4 +186,47 @@
 
   .btncancel:hover {
     background-color: #c82333; /* Rouge foncé pour le hover */
+  }
+
+  .btnupdatecard {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  
+  .btnupdatecard:hover {
+    background-color: #2980b9;
+  }
+
+  .card-buttons {
+    display: flex;
+    justify-content: space-between; /* Espacement égal entre les boutons */
+    width: 100%; /* Prendre toute la largeur de la carte */
+    margin-top: 10px; /* Espacement au-dessus des boutons */
+    gap: 33%; /* Espacement entre les boutons */
+  }
+  
+  .card-buttons button {
+    flex: 1; /* Chaque bouton prend une largeur égale */
+    padding: 5px 10px;
+    font-size: 0.9em;
+    cursor: pointer;
+  }
+  
+  .card-buttons .btnupdatecard {
+    background-color: #4CAF50; /* Vert pour le bouton 'Update' */
+    color: white;
+  }
+  
+  .card-buttons .btndeletecard {
+    background-color: #f44336; /* Rouge pour le bouton 'Delete' */
+    color: white;
+  }
+  
+  .card-buttons button:hover {
+    opacity: 0.8; /* Légère transparence au survol */
   }

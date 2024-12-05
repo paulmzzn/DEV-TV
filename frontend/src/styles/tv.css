@@ -1,10 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
 /* Style de la zone d'affichage de la TV */
 .tv-display {
     display: flex;
     justify-content: center;
     gap: 20px;
     padding: 20px;
-    background-color: #101010;
+    background-color: #f4f4f4;
     color: #101010;
     min-height: 100vh; /* Assurer que l'affichage prenne toute la hauteur */
     flex-wrap: wrap; /* Permet de gérer l'affichage sur plusieurs lignes si nécessaire */
@@ -48,15 +49,16 @@
   
   /* Style pour les titres des colonnes */
   .column h2 {
-    font-size: 1.5rem;
+    font-size: 1.5vw;
     color: #000000;
     margin-bottom: 10px;
     font-weight: bold;
+    font-family: Poppins, sans-serif;
   }
   
   /* Style des textes des cartes */
   .card p {
-    font-size: 0.9rem;
+    font-size: 0.rem;
     line-height: 1.5;
     color: #000000;
     white-space: pre-line; /* Conserve les retours à la ligne */

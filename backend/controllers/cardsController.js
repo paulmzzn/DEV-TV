@@ -32,15 +32,44 @@ const createCard = async (req, res) => {
     }
 };
 
-// Mettre à jour une carte existante
 const updateCard = async (req, res) => {
     try {
       const { id } = req.params;
-      const { columnId } = req.body;
-  
-      if (!columnId) {
-        return res.status(400).json({ error: 'Column ID is required' });
+      const { content, title, link, columnId } = req.body;
+
+      const card = await Card.findById(id);
+      if (!card) {
+        return res.status(404).json({ error: 'Card not found' });
       }
+
+      if (content !== undefined) {
+        card.content = content;
+      }
+      if (title !== undefined) {
+        card.title = title;
+      }
+      if (link !== undefined) {
+        card.link = link;
+      }
+        if (columnId !== undefined) {
+            card.columnId = columnId;
+        }
+
+      await card.save();
+
+      res.status(200).json(card);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la carte :', error);
+      res.status(500).json({ error: 'Error updating card' });
+    }
+};
+
+
+// Mettre à jour une carte existante
+const updateCardid = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { columnId } = req.body;
   
       const card = await Card.findById(id);
       if (!card) {
@@ -98,4 +127,4 @@ const deleteCard = async (req, res) => {
   }
 };
 
-module.exports = { createCard, updateCard, deleteCard };
+module.exports = { createCard, updateCardid, deleteCard, updateCard };

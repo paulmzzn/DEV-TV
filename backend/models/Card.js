@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const cardSchema = new Schema({
   title: { type: String },
-  content: { type: String, required: true },
-  columnId: { type: mongoose.Schema.Types.ObjectId, ref: 'Column', required: true },
+  content: { type: String},
+  columnId: { type: mongoose.Schema.Types.ObjectId, ref: 'Column'},
   link: { type: String, required: false },  // Ajoutez un champ link
 });
 
