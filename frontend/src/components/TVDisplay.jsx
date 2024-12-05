@@ -36,10 +36,18 @@ const TVDisplay = () => {
             <h2>{column.title}</h2>
             <div className="cards">
               {column.cards.map((card) => (
-                <div key={card._id} className="card">
-                  <h4 className="card-title">{card.title}</h4>
-                  <p>{card.content}</p>
-                </div>
+                <a 
+                  key={card._id} 
+                  href={card.link} 
+                  className="card-link" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <div className="card">
+                    <h4 className="card-title">{card.title}</h4>
+                    <p>{card.content}</p>
+                  </div>
+                </a>
               ))}
             </div>
           </div>

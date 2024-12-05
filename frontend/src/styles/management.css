@@ -103,7 +103,7 @@
     background-color: #ff4d4d;
     color: white;
     border: none;
-    border-radius: 3px;
+    border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
     align-self: flex-end;
@@ -207,7 +207,7 @@
     justify-content: space-between; /* Espacement égal entre les boutons */
     width: 100%; /* Prendre toute la largeur de la carte */
     margin-top: 10px; /* Espacement au-dessus des boutons */
-    gap: 33%; /* Espacement entre les boutons */
+    gap: 20%; /* Espacement entre les boutons */
   }
   
   .card-buttons button {

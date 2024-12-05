@@ -81,3 +81,14 @@
       padding: 15px;
     }
   }
+
+  /* Enlever le soulignement et la couleur du lien */
+.card-link {
+    text-decoration: none; /* Supprime le soulignement */
+    color: inherit; /* Hérite de la couleur du parent (par exemple, du texte de la carte) */
+}
+
+.card-link:hover {
+    text-decoration: none; /* Assurer qu'il n'y a pas de soulignement au survol */
+    color: inherit; /* Assurer que la couleur ne change pas au survol */
+}
