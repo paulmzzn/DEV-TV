@@ -13,7 +13,7 @@ const ManagementPanel = () => {
   useEffect(() => {
     const fetchColumns = async () => {
       try {
-        const response = await fetch('http://localhost:3000/columns');
+        const response = await fetch('https://dev-tv.onrender.com/columns');
         const data = await response.json();
         setColumns(data);
       } catch (error) {
@@ -27,7 +27,7 @@ const ManagementPanel = () => {
     const title = prompt('Enter column title:');
     if (!title) return;
 
-    const res = await fetch('http://localhost:3000/columns', {
+    const res = await fetch('https://dev-tv.onrender.com/columns', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, cards: [] }),
@@ -38,7 +38,7 @@ const ManagementPanel = () => {
 
   const deleteColumn = async (id) => {
     try {
-      await fetch(`http://localhost:3000/columns/${id}`, { method: 'DELETE' });
+      await fetch(`https://dev-tv.onrender.com/columns/${id}`, { method: 'DELETE' });
       setColumns(columns.filter((column) => column._id !== id));
     } catch (error) {
       console.error('Erreur lors de la suppression de la colonne:', error);
@@ -59,7 +59,7 @@ const ManagementPanel = () => {
     };
 
     try {
-      const res = await fetch('http://localhost:3000/cards', {
+      const res = await fetch('https://dev-tv.onrender.com/cards', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newCardData),
@@ -87,7 +87,7 @@ const ManagementPanel = () => {
 
   const deleteCard = async (columnId, cardId) => {
     try {
-      await fetch(`http://localhost:3000/cards/${cardId}`, { method: 'DELETE' });
+      await fetch(`https://dev-tv.onrender.com/cards/${cardId}`, { method: 'DELETE' });
 
       const updatedColumns = columns.map((column) => {
         if (column._id === columnId) {
@@ -176,7 +176,7 @@ const ManagementPanel = () => {
     console.log(`Sending update request for card ID: ${cardId} to column ID: ${newColumnId}`);
   
     try {
-      const response = await fetch(`http://localhost:3000/cards/${cardId}`, {
+      const response = await fetch(`https://dev-tv.onrender.com/cards/${cardId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -213,7 +213,7 @@ const ManagementPanel = () => {
     console.log('Données de la carte à mettre à jour:', editCardData); // Log des données envoyées
   
     try {
-      const res = await fetch(`http://localhost:3000/cards/${editCardData.cardId}`, {
+      const res = await fetch(`https://dev-tv.onrender.com//cards/${editCardData.cardId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -8,7 +8,7 @@ const TVDisplay = () => {
     // Fonction pour récupérer les colonnes depuis le serveur
     const fetchColumns = async () => {
       try {
-        const response = await fetch('http://localhost:3000/columns');
+        const response = await fetch('https://dev-tv.onrender.com/columns');
         const data = await response.json();
         setColumns(data);
       } catch (error) {
