@@ -92,3 +92,31 @@
     text-decoration: none; /* Assurer qu'il n'y a pas de soulignement au survol */
     color: inherit; /* Assurer que la couleur ne change pas au survol */
 }
+
+.card-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  
+  .delete-button:hover {
+    background-color: darkred;
+  }

@@ -230,3 +230,10 @@
   .card-buttons button:hover {
     opacity: 0.8; /* Légère transparence au survol */
   }
+
+  .card-author {
+    font-size: 0.8rem;
+    color: #555;
+    text-align: right;
+    margin-top: 10px;
+  }

@@ -5,7 +5,6 @@ const TVDisplay = () => {
   const [columns, setColumns] = useState([]);
 
   useEffect(() => {
-    // Fonction pour récupérer les colonnes depuis le serveur
     const fetchColumns = async () => {
       try {
         const response = await fetch('http://localhost:3000/columns');
@@ -16,17 +15,33 @@ const TVDisplay = () => {
       }
     };
 
-    // Initialiser la récupération des données au montage du composant
+    const interval = setInterval(fetchColumns, 1000); // Rafraîchit toutes les secondes
     fetchColumns();
 
-    // Rafraîchir les données toutes les 10 secondes
-    const interval = setInterval(fetchColumns, 1000); // Intervalle de 10 secondes
-
-    // Nettoyage de l'intervalle lors du démontage du composant
     return () => {
-      clearInterval(interval);
+      clearInterval(interval); // Nettoie l'intervalle lors du démontage
     };
-  }, []); // L'effet s'exécute uniquement lors du montage du composant
+  }, []);
+
+  const deleteCard = async (columnId, cardId) => {
+    try {
+      await fetch(`http://localhost:3000/cards/${cardId}`, { method: 'DELETE' });
+
+      const updatedColumns = columns.map((column) => {
+        if (column._id === columnId) {
+          return {
+            ...column,
+            cards: column.cards.filter((card) => card._id !== cardId),
+          };
+        }
+        return column;
+      });
+
+      setColumns(updatedColumns);
+    } catch (error) {
+      console.error('Erreur lors de la suppression de la carte:', error);
+    }
+  };
 
   return (
     <div className="tv-display">
@@ -36,18 +51,26 @@ const TVDisplay = () => {
             <h2>{column.title}</h2>
             <div className="cards">
               {column.cards.map((card) => (
-                <a 
-                  key={card._id} 
-                  href={card.link} 
-                  className="card-link" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  <div className="card">
-                    <h4 className="card-title">{card.title}</h4>
-                    <p>{card.content}</p>
-                  </div>
-                </a>
+                <div key={card._id} className="card-container">
+                  <button
+                    className="delete-button"
+                    onClick={() => deleteCard(column._id, card._id)}
+                  >
+                    &times;
+                  </button>
+                  <a 
+                    href={card.link} 
+                    className="card-link" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <div className="card">
+                      <h4 className="card-title">{card.title}</h4>
+                      <p>{card.content}</p>
+                      <p className="card-author">Auteur : {card.author || '???'}</p>
+                    </div>
+                  </a>
+                </div>
               ))}
             </div>
           </div>

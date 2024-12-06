@@ -6,9 +6,9 @@ const ManagementPanel = () => {
   const [columns, setColumns] = useState([]);
   const [showCardForm, setShowCardForm] = useState(false); // État pour afficher/masquer la popup
   const [currentColumnId, setCurrentColumnId] = useState(null); // Colonne cible pour la nouvelle carte
-  const [cardData, setCardData] = useState({ title: '', content: '', link: '' }); // Données du formulaire
+  const [cardData, setCardData] = useState({ title: '', content: '', link: '', author: '' });
   const [showEditCardForm, setShowEditCardForm] = useState(false); // État pour afficher/masquer le formulaire d'édition
-  const [editCardData, setEditCardData] = useState({ title: '', content: '', link: '', cardId: '' }); // Données de la carte à éditer
+  const [editCardData, setEditCardData] = useState({ title: '', content: '', link: '', author: '', cardId: '' });
 
   useEffect(() => {
     const fetchColumns = async () => {
@@ -56,6 +56,7 @@ const ManagementPanel = () => {
       content: cardData.content,
       columnId: currentColumnId,
       link: cardData.link,  // Ajouter le lien ici
+      author: cardData.author,
     };
 
     try {
@@ -109,64 +110,69 @@ const ManagementPanel = () => {
     e.dataTransfer.setData('text/plain', cardId);
   };
 
-  const handleDrop = async (e, newColumnId) => {
+const handleDrop = async (e, newColumnId) => {
     e.preventDefault();
     const cardId = e.dataTransfer.getData('text/plain');
     
     console.log("Card ID dropped: ", cardId);
     console.log("Target column ID: ", newColumnId);
-  
+
     const sourceColumn = columns.find((column) =>
-      column.cards.some((card) => card._id === cardId)
+        column.cards.some((card) => card._id === cardId)
     );
-  
+
     if (!sourceColumn) {
-      console.log("Source column not found");
-      return;
+        console.log("Source column not found");
+        return;
     }
-  
+
     console.log("Source column found: ", sourceColumn);
-  
+
     const cardToMove = sourceColumn.cards.find((card) => card._id === cardId);
-  
+
     if (!cardToMove) {
-      console.log("Card to move not found in the source column");
-      return;
+        console.log("Card to move not found in the source column");
+        return;
     }
-  
+
     console.log("Card to move: ", cardToMove);
-  
-    try {
-      // Mise à jour de la carte avec le nouveau columnId
-      console.log("Updating card column...");
-      await updateCardColumn(cardId, newColumnId, cardToMove);
-  
-      // Mettre à jour les colonnes dans le state local
-      console.log("Updating columns in the local state...");
-      const updatedColumns = columns.map((column) => {
-        if (column._id === sourceColumn._id) {
-          console.log("Removing card from source column: ", sourceColumn._id);
-          return {
-            ...column,
-            cards: column.cards.filter((card) => card._id !== cardId), // Retirer la carte de la colonne source
-          };
-        }
-        if (column._id === newColumnId) {
-          console.log("Adding card to new column: ", newColumnId);
-          return {
-            ...column,
-            cards: [...column.cards, { ...cardToMove, columnId: newColumnId }], // Ajouter la carte à la nouvelle colonne
-          };
-        }
-        return column;
-      });
-  
-      console.log("Updated columns: ", updatedColumns);
-      setColumns(updatedColumns); // Mettre à jour l'état local
-    } catch (error) {
-      console.error('Erreur lors du déplacement de la carte:', error);
+
+    if (sourceColumn._id === newColumnId) {
+        console.log("Card dropped in the same column, no update needed.");
+        return;
     }
-  };
+
+    try {
+        // Mise à jour de la carte avec le nouveau columnId
+        console.log("Updating card column...");
+        await updateCardColumn(cardId, newColumnId, cardToMove);
+
+        // Mettre à jour les colonnes dans le state local
+        console.log("Updating columns in the local state...");
+        const updatedColumns = columns.map((column) => {
+            if (column._id === sourceColumn._id) {
+                console.log("Removing card from source column: ", sourceColumn._id);
+                return {
+                    ...column,
+                    cards: column.cards.filter((card) => card._id !== cardId), // Retirer la carte de la colonne source
+                };
+            }
+            if (column._id === newColumnId) {
+                console.log("Adding card to new column: ", newColumnId);
+                return {
+                    ...column,
+                    cards: [...column.cards, { ...cardToMove, columnId: newColumnId }], // Ajouter la carte à la nouvelle colonne
+                };
+            }
+            return column;
+        });
+
+        console.log("Updated columns: ", updatedColumns);
+        setColumns(updatedColumns); // Mettre à jour l'état local
+    } catch (error) {
+        console.error('Erreur lors du déplacement de la carte:', error);
+    }
+};
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -221,6 +227,7 @@ const ManagementPanel = () => {
           content: editCardData.content,
           link: editCardData.link,
           columnId: editCardData.columnId, // Ajout du columnId
+          author: editCardData.author,
         }),
       });
   
@@ -295,6 +302,7 @@ const ManagementPanel = () => {
                       {card.link}
                     </a>
                   )}
+                  <p className="card-author">Auteur : {card.author || '???'}</p>
                   <div className="card-buttons">
                     <button className="btnupdatecard" onClick={() => openEditCardForm(card)}>
                         Update Card
@@ -302,6 +310,7 @@ const ManagementPanel = () => {
                     <button className="btndeletecard" onClick={() => deleteCard(column._id, card._id)}>
                         Delete Card
                     </button>
+                    
                   </div>
                 </div>
               ))}
@@ -337,6 +346,10 @@ const ManagementPanel = () => {
                 onChange={(e) => setCardData({ ...cardData, link: e.target.value })}
               />
             </label>
+            <label>
+                Auteur :
+                <input type="text" value={cardData.author} onChange={(e) => setCardData({ ...cardData, author: e.target.value })}/>
+            </label>
             <div className="form-actions">
               <button className="btncancel" onClick={() => setShowCardForm(false)}>Annuler</button>
               <button onClick={addCard}>Ajouter</button>
@@ -371,6 +384,14 @@ const ManagementPanel = () => {
           onChange={(e) => setEditCardData({ ...editCardData, link: e.target.value })}
         />
       </label>
+        <label>
+            Auteur :
+            <input
+            type="text"
+            value={editCardData.author}
+            onChange={(e) => setEditCardData({ ...editCardData, author: e.target.value })}
+            />
+        </label>
       <div className="form-actions">
         <button className="btncancel" onClick={() => setShowEditCardForm(false)}>Annuler</button>
         <button onClick={updateCard}>Mettre à Jour</button>

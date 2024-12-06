@@ -5,14 +5,14 @@ const Card = require('../models/Card');
 
 const createCard = async (req, res) => {
     try {
-      const { title, content, columnId, link } = req.body; // Inclure le lien ici
+      const { title, content, columnId, link ,author} = req.body; // Inclure le lien ici
 
       if (!title || !content || !columnId) {
         return res.status(400).json({ error: 'title, content, and columnId are required' });
       }
 
       // Créer la carte avec le titre, le contenu et le lien
-      const card = new Card({ title, content, columnId, link }); // Ajouter le lien ici
+      const card = new Card({ title, content, columnId, link, author }); // Ajouter le lien ici
 
       // Sauvegarder la carte
       await card.save();
@@ -25,7 +25,7 @@ const createCard = async (req, res) => {
       }
 
       res.status(201).json(card);
-      console.log('Card Data:', { title, content, columnId, link });
+      console.log('Card Data:', { title, content, columnId, link, author });
     } catch (error) {
       console.error(error);
       res.status(400).json({ error: 'Error creating card' });
@@ -35,7 +35,7 @@ const createCard = async (req, res) => {
 const updateCard = async (req, res) => {
     try {
       const { id } = req.params;
-      const { content, title, link, columnId } = req.body;
+      const { content, title, link, columnId, author } = req.body;
 
       const card = await Card.findById(id);
       if (!card) {
@@ -51,8 +51,11 @@ const updateCard = async (req, res) => {
       if (link !== undefined) {
         card.link = link;
       }
-        if (columnId !== undefined) {
-            card.columnId = columnId;
+      if (columnId !== undefined) {
+          card.columnId = columnId;
+      }
+        if (author !== undefined) {
+            card.author = author;
         }
 
       await card.save();
