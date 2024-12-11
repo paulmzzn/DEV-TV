@@ -383,7 +383,16 @@
     color: white;
   }
 
+  .btn-status-red:hover {
+    background-color: darkred;
+  }
+
   .btn-status-green {
+    background-color: green;
+    color: white;
+  }
+
+  .btn-status-green:hover {
     background-color: darkgreen;
     color: white;
   }
