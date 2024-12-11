@@ -12,10 +12,10 @@
   <div id="popup-overlay" class="popup-overlay" style="display: none;">
     <div class="popup-content">
       <h3>Entrez votre nom</h3>
-      <input type="text" id="username-input" placeholder="Votre nom">
+      <input type="text" id="username-input" placeholder="Votre nom" autocomplete="given-name">
       <div class="form-actions">
-        <button id="submit-btn">Valider</button>
-        <button id="cancel-btn">Annuler</button>
+        <button class='btn-status-red'id="cancel-btn">Annuler</button>
+        <button class='btn-status-green' id="submit-btn" >Valider</button>
       </div>
     </div>
   </div>
@@ -54,7 +54,7 @@
       const updateCardStatus = async (cardId, newStatus) => {
         try {
           console.log(`Updating status of card ${cardId} to ${newStatus}...`);
-          const response = await fetch(`http://localhost:3000/api/cards/${cardId}`, { 
+          const response = await fetch(`http://87.106.130.160/api/cards/${cardId}`, { 
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ status: newStatus })

@@ -9,7 +9,7 @@ const TVDisplay = () => {
   useEffect(() => {
     const fetchColumns = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/columns');
+        const response = await fetch('http://87.106.130.160/api/columns');
         const data = await response.json();
         setColumns(data);
       } catch (error) {
@@ -27,7 +27,7 @@ const TVDisplay = () => {
 
   const deleteCard = async (columnId, cardId) => {
     try {
-      await fetch(`http://localhost:3000/api/cards/${cardId}`, { method: 'DELETE' });
+      await fetch(`http://87.106.130.160/api/cards/${cardId}`, { method: 'DELETE' });
 
       const updatedColumns = columns.map((column) => {
         if (column._id === columnId) {
