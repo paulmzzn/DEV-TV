@@ -1,3 +1,5 @@
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
 import React, { useEffect, useState } from 'react';
 import '../styles/management.css';
 import '../styles/tv.css';
@@ -6,14 +8,14 @@ const ManagementPanel = () => {
   const [columns, setColumns] = useState([]);
   const [showCardForm, setShowCardForm] = useState(false); // État pour afficher/masquer la popup
   const [currentColumnId, setCurrentColumnId] = useState(null); // Colonne cible pour la nouvelle carte
-  const [cardData, setCardData] = useState({ title: '', content: '', link: '', author: '' });
+  const [cardData, setCardData] = useState({ title: '', content: '', link: '', author: '', status: '' });
   const [showEditCardForm, setShowEditCardForm] = useState(false); // État pour afficher/masquer le formulaire d'édition
-  const [editCardData, setEditCardData] = useState({ title: '', content: '', link: '', author: '', cardId: '' });
+  const [editCardData, setEditCardData] = useState({ title: '', content: '', link: '', author: '', cardId: '', status: '' });
 
   useEffect(() => {
     const fetchColumns = async () => {
       try {
-        const response = await fetch('http://87.106.130.160/api/columns');
+        const response = await fetch('http://localhost:3000/api/columns');
         const data = await response.json();
         setColumns(data);
       } catch (error) {
@@ -27,7 +29,7 @@ const ManagementPanel = () => {
     const title = prompt('Enter column title:');
     if (!title) return;
 
-    const res = await fetch('http://87.106.130.160/api/columns', {
+    const res = await fetch('http://localhost:3000/api/columns', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, cards: [] }),
@@ -38,7 +40,7 @@ const ManagementPanel = () => {
 
   const deleteColumn = async (id) => {
     try {
-      await fetch(`http://87.106.130.160/api/columns/${id}`, { method: 'DELETE' });
+      await fetch(`http://localhost:3000/api/columns/${id}`, { method: 'DELETE' });
       setColumns(columns.filter((column) => column._id !== id));
     } catch (error) {
       console.error('Erreur lors de la suppression de la colonne:', error);
@@ -60,7 +62,7 @@ const ManagementPanel = () => {
     };
 
     try {
-      const res = await fetch('http://87.106.130.160/api/cards', {
+      const res = await fetch('http://localhost:3000/api/cards', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newCardData),
@@ -88,7 +90,7 @@ const ManagementPanel = () => {
 
   const deleteCard = async (columnId, cardId) => {
     try {
-      await fetch(`http://87.106.130.160/api/cards/${cardId}`, { method: 'DELETE' });
+      await fetch(`http://localhost:3000/api/cards/${cardId}`, { method: 'DELETE' });
 
       const updatedColumns = columns.map((column) => {
         if (column._id === columnId) {
@@ -182,7 +184,7 @@ const handleDrop = async (e, newColumnId) => {
     console.log(`Sending update request for card ID: ${cardId} to column ID: ${newColumnId}`);
   
     try {
-      const response = await fetch(`http://87.106.130.160/api/cards/${cardId}`, {
+      const response = await fetch(`http://localhost:3000/api/cards/${cardId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -219,7 +221,7 @@ const handleDrop = async (e, newColumnId) => {
     console.log('Données de la carte à mettre à jour:', editCardData); // Log des données envoyées
   
     try {
-      const res = await fetch(`http://87.106.130.160/api/cards/${editCardData.cardId}`, {
+      const res = await fetch(`http://localhost:3000/api/cards/${editCardData.cardId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -228,10 +230,11 @@ const handleDrop = async (e, newColumnId) => {
           link: editCardData.link,
           columnId: editCardData.columnId, // Ajout du columnId
           author: editCardData.author,
+          status: editCardData.status, // Assurez-vous que status est inclus
         }),
       });
   
-      console.log('Réponse de la requête PATCH:', res); // Log de la réponse du serveur
+      console.log('Réponse de la requête PUT:', res); // Log de la réponse du serveur
   
       if (!res.ok) {
         const errorData = await res.json(); // Capture les erreurs envoyées par le serveur
@@ -260,7 +263,7 @@ const handleDrop = async (e, newColumnId) => {
       console.error('Erreur lors de la mise à jour de la carte:', error);
     }
   };
-
+  
   return (
     <div className="management-panel">
       <button onClick={addColumn}>Add Column</button>
@@ -302,7 +305,12 @@ const handleDrop = async (e, newColumnId) => {
                       {card.link}
                     </a>
                   )}
+                <div className="card-footer">
+                  <p className={`card-status ${card.status === 'Disponible' ? 'available' : 'unavailable'}`}>
+                    <b>{card.status || '???'}</b>
+                  </p>
                   <p className="card-author">Auteur : {card.author || '???'}</p>
+                </div>
                   <div className="card-buttons">
                     <button className="btnupdatecard" onClick={() => openEditCardForm(card)}>
                         Update Card
@@ -384,14 +392,22 @@ const handleDrop = async (e, newColumnId) => {
           onChange={(e) => setEditCardData({ ...editCardData, link: e.target.value })}
         />
       </label>
-        <label>
-            Auteur :
-            <input
-            type="text"
-            value={editCardData.author}
-            onChange={(e) => setEditCardData({ ...editCardData, author: e.target.value })}
-            />
-        </label>
+      <label>
+        Auteur :
+        <input
+          type="text"
+          value={editCardData.author}
+          onChange={(e) => setEditCardData({ ...editCardData, author: e.target.value })}
+        />
+      </label>
+      <label>
+        Statut :
+        <input
+          type="text"
+          value={editCardData.status}
+          onChange={(e) => setEditCardData({ ...editCardData, status: e.target.value })}
+        />
+      </label>
       <div className="form-actions">
         <button className="btncancel" onClick={() => setShowEditCardForm(false)}>Annuler</button>
         <button onClick={updateCard}>Mettre à Jour</button>

@@ -1,4 +1,120 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
+/* Style de la zone d'affichage de la TV */
+.tv-display {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    background-color: #f4f4f4;
+    color: #101010;
+    min-height: 100vh; /* Assurer que l'affichage prenne toute la hauteur */
+    flex-wrap: wrap; /* Permet de gérer l'affichage sur plusieurs lignes si nécessaire */
+  }
+  
+  /* Style pour chaque colonne */
+  .column {
+    background: #222;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    min-width: 200px; /* Limite la largeur minimale des colonnes */
+    flex: 1 1 400px; /* Les colonnes se redimensionnent dynamiquement */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrer les cartes à l'intérieur de la colonne */
+  }
+  
+  /* Style pour la section des cartes à l'intérieur des colonnes */
+.cards {
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%; /* Assure que les cartes prennent toute la largeur de la colonne */
+    margin-bottom: 20px;
+}
+
+
+  
+  .card:hover {
+    transform: translateY(-5px); /* Légère élévation au survol */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Ombre plus forte au survol */
+  }
+  
+  /* Style pour les titres des colonnes */
+  .column h2 {
+    font-size: 1.5vw;
+    color: #000000;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-family: Poppins, sans-serif;
+  }
+  
+  /* Style des textes des cartes */
+  .card p {
+    font-size: 0.7rem;
+    line-height: 1.5;
+    color: #000000;
+    white-space: pre-line; /* Conserve les retours à la ligne */
+  }
+  
+  /* Media queries pour responsive */
+  @media (max-width: 768px) {
+    .tv-display {
+      padding: 10px;
+      flex-direction: column;
+      align-items: center; /* Aligner les colonnes verticalement sur les petits écrans */
+    }
+  
+    .column {
+      width: 80%; /* Colonne plus large sur petits écrans */
+      margin-bottom: 20px;
+    }
+  
+    .card {
+      padding: 15px;
+    }
+  }
+
+  /* Enlever le soulignement et la couleur du lien */
+.card-link {
+    text-decoration: none; /* Supprime le soulignement */
+    color: inherit; /* Hérite de la couleur du parent (par exemple, du texte de la carte) */
+}
+
+.card-link:hover {
+    text-decoration: none; /* Assurer qu'il n'y a pas de soulignement au survol */
+    color: inherit; /* Assurer que la couleur ne change pas au survol */
+}
+
+.card-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  
+  .delete-button:hover {
+    background-color: darkred;
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
 
 .management-panel {
 
@@ -93,21 +209,35 @@
   width: 100%;  /* Ajouter cette ligne pour forcer la largeur du contenu */
 }
   
-  .btndeletecard {
-    margin-top: auto;
-    padding: 5px 10px;
-    background-color: #ff4d4d;
+.card-container {
+    position: relative;
+    display: inline-block;
+}
+
+.btndeletecard {
+    position: absolute;
+    top: 6px;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    background-color: red;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 50%;
+    font-size: 15px;
+    font-weight: bold;
     cursor: pointer;
-    font-size: 14px;
-    align-self: flex-end;
-  }
-  
-  .btndeletecard:hover {
-    background-color: #ff1a1a;
-  }
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    line-height: 1; /* Assure que le "X" est centré verticalement */
+    padding: 0;
+}
+
+.btndeletecard:hover {
+    background-color: darkred;
+}
   
   /* Boutons génériques (sans classe spécifique) */
   button {
@@ -236,16 +366,24 @@
 
   .card-footer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-between; /* Espace entre le bouton et l'auteur */
+    align-items: center; /* Centrer verticalement */
     margin-top: 10px;
-    font-size: 0.7rem;
   }
-  
-  .card-status.unavailable {
-    color: darkgreen;
+
+  .btn-status {
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
   }
-  
-  .card-status.available {
-    color: red;
+
+  .btn-status-red {
+    background-color: red;
+    color: white;
+  }
+
+  .btn-status-green {
+    background-color: darkgreen;
+    color: white;
   }

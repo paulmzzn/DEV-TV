@@ -13,7 +13,6 @@
   
   /* Style pour chaque colonne */
   .column {
-    background: #222;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     min-width: 200px; /* Limite la largeur minimale des colonnes */
@@ -51,7 +50,7 @@
   
   /* Style des textes des cartes */
   .card p {
-    font-size: 0.rem;
+    font-size: 0.7rem;
     line-height: 1.5;
     color: #000000;
     white-space: pre-line; /* Conserve les retours à la ligne */

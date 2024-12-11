@@ -16,8 +16,8 @@ app.use(express.json());
 const columnsRoutes = require('./routes/columns');
 const cardsRoutes = require('./routes/cards');
 
-app.use('/columns', columnsRoutes);
-app.use('/cards', cardsRoutes);
+app.use('/api/columns', columnsRoutes);
+app.use('/api/cards', cardsRoutes);
 
 
 // Connexion à MongoDB

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TV Display</title>
+  <link rel="stylesheet" href="styles/tv.css">
+</head>
+<body>
+  <div id="tv-display" class="tv-display"></div>
+
+  <div id="popup-overlay" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+      <h3>Entrez votre nom</h3>
+      <input type="text" id="username-input" placeholder="Votre nom">
+      <div class="form-actions">
+        <button id="submit-btn">Valider</button>
+        <button id="cancel-btn">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const tvDisplay = document.getElementById('tv-display');
+      const popupOverlay = document.getElementById('popup-overlay');
+      const submitBtn = document.getElementById('submit-btn');
+      const cancelBtn = document.getElementById('cancel-btn');
+      let currentCardId = null;
+      let currentColumnId = null;
+
+      const fetchColumns = async () => {
+        try {
+          const response = await fetch('http://87.106.130.160/api/columns');
+          const columns = await response.json();
+          console.log('Columns fetched:', columns);
+          updateUI(columns);
+        } catch (error) {
+          console.error('Erreur lors de la récupération des colonnes:', error);
+        }
+      };
+
+      const deleteCard = async (columnId, cardId) => {
+        try {
+          console.log(`Deleting card ${cardId} from column ${columnId}...`);
+          await fetch(`http://87.106.130.160/api/cards/${cardId}`, { method: 'DELETE' });
+          console.log(`Card ${cardId} deleted.`);
+          fetchColumns(); // Rafraîchit l'interface après suppression
+        } catch (error) {
+          console.error('Erreur lors de la suppression de la carte:', error);
+        }
+      };
+
+      const updateCardStatus = async (cardId, newStatus) => {
+        try {
+          console.log(`Updating status of card ${cardId} to ${newStatus}...`);
+          const response = await fetch(`http://localhost:3000/api/cards/${cardId}`, { 
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+          });
+          const result = await response.json();
+          console.log(`Status of card ${cardId} updated to ${newStatus}. API Response:`, result);
+
+          // Vérifier si la mise à jour a réussi
+          if (response.ok) {
+            fetchColumns(); // Rafraîchit l'interface après mise à jour
+          } else {
+            console.error('Erreur lors de la mise à jour du statut de la carte:', result);
+          }
+        } catch (error) {
+          console.error('Erreur lors de la mise à jour du statut de la carte:', error);
+        }
+      };
+
+      const updateUI = (columns) => {
+        console.log('Updating UI...');
+        tvDisplay.innerHTML = ''; // Réinitialise l'affichage
+        columns.forEach(column => {
+          console.log(`Processing column: ${column.title}`);
+          const columnElement = document.createElement('div');
+          columnElement.className = 'column';
+          columnElement.innerHTML = `<h2>${column.title}</h2>`;
+
+          const cardsContainer = document.createElement('div');
+          cardsContainer.className = 'cards';
+
+          column.cards.forEach(card => {
+            console.log(`Processing card: ${card.title}`);
+            const cardContainer = document.createElement('div');
+            cardContainer.className = 'card-container';
+
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'btndeletecard';
+            deleteButton.innerHTML = '&times;';
+            deleteButton.addEventListener('click', () => deleteCard(column._id, card._id));
+
+            const cardElement = document.createElement('div');
+            cardElement.className = 'card';
+            cardElement.innerHTML = `
+              <h4 class="card-title">${card.title}</h4>
+              <p>${card.content}</p>
+              <div class="card-footer">
+                <button class="btn-status ${card.status === 'Disponible' ? 'btn-status-red' : 'btn-status-green'}">${card.status || '???'}</button>
+                <p class="card-author">Auteur : ${card.author || '???'}</p>
+              </div>
+            `;
+
+            if (card.link) {
+              const cardLink = document.createElement('a');
+              cardLink.href = card.link;
+              cardLink.rel = 'noopener noreferrer';
+              cardLink.className = 'card-link';
+
+              cardLink.appendChild(cardElement);
+              cardContainer.appendChild(cardLink);
+            } else {
+              cardContainer.appendChild(cardElement);
+            }
+
+            cardElement.querySelector('.btn-status').addEventListener('click', () => {
+              console.log(`Status button clicked for card ${card._id}...`);
+              if (card.status === 'Disponible') {
+                console.log('Card is available. Showing popup...');
+                popupOverlay.style.display = 'flex';
+                currentCardId = card._id;
+                currentColumnId = column._id;
+              }
+            });
+
+            cardContainer.appendChild(deleteButton);
+            cardsContainer.appendChild(cardContainer);
+          });
+
+          columnElement.appendChild(cardsContainer);
+          tvDisplay.appendChild(columnElement);
+        });
+        console.log('UI updated.');
+      };
+
+      // Gestion des actions de la popup
+      submitBtn.addEventListener('click', () => {
+        const username = document.getElementById('username-input').value.trim();
+        console.log(`Submit button clicked. Username: ${username}, currentCardId: ${currentCardId}`);
+        if (username && currentCardId) {
+          updateCardStatus(currentCardId, `En cours : ${username}`);
+          popupOverlay.style.display = 'none';
+          document.getElementById('username-input').value = '';
+        }
+      });
+
+      cancelBtn.addEventListener('click', () => {
+        console.log('Cancel button clicked.');
+        popupOverlay.style.display = 'none';
+        document.getElementById('username-input').value = '';
+      });
+
+      // Rafraîchissement automatique des colonnes
+      fetchColumns();
+      setInterval(fetchColumns, 1000); // Toutes les secondes
+    })();
+  </script>
+</body>
+</html>

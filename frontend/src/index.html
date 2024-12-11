@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>React Test</title>
+  <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    console.log("React starting...");
+    ReactDOM.render(
+      React.createElement('div', null, React.createElement('h1', null, 'React Test')),
+      document.getElementById('root')
+    );
+  </script>
+</body>
+</html>
