@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
 
 .management-panel {
-    padding: 20px;
+
     background-color: #f4f4f4;
     display: flex;
     flex-direction: column;
@@ -75,12 +75,8 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-family: Poppins, sans-serif;
   font-weight: 500;
-  font-size: 0.8em;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* Change de 'space-between' à 'flex-start' */
-  align-items: flex-start;  /* Aligner à gauche */
-  height: 100%;
+  font-size: 0.7em;
+
 }
 
 .card-title {
@@ -232,7 +228,7 @@
   }
 
   .card-author {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     color: #555;
     text-align: right;
     margin-top: 10px;

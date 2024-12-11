@@ -14,7 +14,6 @@
   /* Style pour chaque colonne */
   .column {
     background: #222;
-    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     min-width: 200px; /* Limite la largeur minimale des colonnes */
@@ -25,22 +24,16 @@
   }
   
   /* Style pour la section des cartes à l'intérieur des colonnes */
-  .cards {
-    margin-top: 20px;
+.cards {
+    margin: 20px;
     display: flex;
     flex-direction: column;
     gap: 15px;
     width: 100%; /* Assure que les cartes prennent toute la largeur de la colonne */
-  }
-  
-  /* Style pour chaque carte */
-  .card {
-    background: #333;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Effet de profondeur pour les cartes */
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Animation douce */
-  }
+    margin-bottom: 20px;
+}
+
+
   
   .card:hover {
     transform: translateY(-5px); /* Légère élévation au survol */
