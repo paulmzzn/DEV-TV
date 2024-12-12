@@ -12,7 +12,7 @@ body {
     padding: 20px;
     background-color: #f4f4f4;
     color: #101010;
-    min-height: 100vh; /* Assurer que l'affichage prenne toute la hauteur */
+    height: 54.5vw;
     flex-wrap: wrap; /* Permet de gérer l'affichage sur plusieurs lignes si nécessaire */
 }
 
@@ -21,8 +21,8 @@ body {
     background: #222;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    min-width: 200px; /* Limite la largeur minimale des colonnes */
-    flex: 1 1 400px; /* Les colonnes se redimensionnent dynamiquement */
+    min-width: 150px; /* Limite la largeur minimale des colonnes */
+    flex: 1 1 200px; /* Les colonnes se redimensionnent dynamiquement */
     display: flex;
     flex-direction: column;
     align-items: center; /* Centrer les cartes à l'intérieur de la colonne */
@@ -89,6 +89,7 @@ body {
     text-align: left;  /* Justification à gauche */
     margin-bottom: 10px;
     width: 100%;  /* Ajouter cette ligne pour forcer la largeur du titre */
+    font-size: 1rem;
 }
 
 .card-content {

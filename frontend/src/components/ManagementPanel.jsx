@@ -334,7 +334,7 @@ const ManagementPanel = () => {
                     </a>
                   )}
                   <div className="card-footer">
-                    <p className={`card-status ${card.status === 'Disponible' ? 'available' : 'unavailable'}`}>
+                    <p className={`card-status ${card.status === 'À faire' ? 'available' : 'unavailable'}`}>
                       <b>{card.status || '???'}</b>
                     </p>
                     <p className="card-author">Auteur : {card.author || '???'}</p>
@@ -364,6 +364,7 @@ const ManagementPanel = () => {
                 type="text"
                 value={cardData.title}
                 onChange={(e) => setCardData({ ...cardData, title: e.target.value })}
+                placeholder='Titre de la carte'
               />
             </label>
             <label>
@@ -371,6 +372,7 @@ const ManagementPanel = () => {
               <textarea
                 value={cardData.content}
                 onChange={(e) => setCardData({ ...cardData, content: e.target.value })}
+                placeholder='Contenu de la carte'
               />
             </label>
             <label>
@@ -378,7 +380,14 @@ const ManagementPanel = () => {
               <input
                 type="url"
                 value={cardData.link || ''}
-                onChange={(e) => setCardData({ ...cardData, link: e.target.value })}
+                onChange={(e) => {
+                  let link = e.target.value;
+                  if (link && !link.startsWith('http://') && !link.startsWith('https://')) {
+                    link = 'https://' + link;
+                  }
+                  setCardData({ ...cardData, link });
+                }}
+                placeholder='https://'
               />
             </label>
             <label>
@@ -387,6 +396,7 @@ const ManagementPanel = () => {
                 type="text"
                 value={cardData.author}
                 onChange={(e) => setCardData({ ...cardData, author: e.target.value })}
+                placeholder='Auteur de la carte'
               />
             </label>
             <label>
