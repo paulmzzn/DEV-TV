@@ -112,7 +112,7 @@
               <h4 class="card-title">${card.title}</h4>
               <p>${card.content}</p>
               <div class="card-footer">
-                <button class="btn-status ${card.status === 'Disponible' ? 'btn-status-red' : 'btn-status-green'}"><b>${card.status || '???'}</b></button>
+                <button class="btn-status ${card.status === 'À faire' ? 'btn-status-red' : 'btn-status-green'}"><b>${card.status || '???'}</b></button>
                 <p class="card-author">Auteur : <b>${card.author || '???'}</b></p>
               </div>
             `;
@@ -136,7 +136,7 @@
 
             cardElement.querySelector('.btn-status').addEventListener('click', () => {
               console.log(`Status button clicked for card ${card._id}...`);
-              if (card.status === 'Disponible') {
+              if (card.status === 'À faire') {
                 console.log('Card is available. Showing popup...');
                 popupOverlay.style.display = 'flex';
                 currentCardId = card._id;
