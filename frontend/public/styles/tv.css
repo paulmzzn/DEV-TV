@@ -183,7 +183,7 @@
   }
   
 .card {
-  background: #eee;
+  background: #ffffff;
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
@@ -396,3 +396,20 @@
     background-color: darkgreen;
     color: white;
   }
+
+
+  .column.prepa-commande {
+    background-color: #B3E5FC; /* Bleu pastel */
+}
+
+.column.stock {
+    background-color: #C8E6C9; /* Vert pastel */
+}
+
+.column.inter {
+    background-color: #FFF9C4; /* Jaune pastel */
+}
+
+.column.rappel {
+    background-color: #fb8787; /* Rose pastel */
+}

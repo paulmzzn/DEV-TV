@@ -80,6 +80,11 @@
           console.log(`Processing column: ${column.title}`);
           const columnElement = document.createElement('div');
           columnElement.className = 'column';
+
+          // Ajouter une classe en fonction du titre de la colonne
+          const columnClass = column.title.replace(/\s+/g, '-').toLowerCase();
+          columnElement.classList.add(columnClass);
+
           columnElement.innerHTML = `<h2>${column.title}</h2>`;
 
           const cardsContainer = document.createElement('div');
