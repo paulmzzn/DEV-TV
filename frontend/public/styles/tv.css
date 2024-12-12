@@ -1,18 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
 /* Style de la zone d'affichage de la TV */
 .tv-display {
     display: flex;
     justify-content: center;
-    gap: 20px;
     padding: 20px;
     background-color: #f4f4f4;
     color: #101010;
     min-height: 100vh; /* Assurer que l'affichage prenne toute la hauteur */
     flex-wrap: wrap; /* Permet de gérer l'affichage sur plusieurs lignes si nécessaire */
-  }
-  
-  /* Style pour chaque colonne */
-  .column {
+}
+
+/* Style pour chaque colonne */
+.column {
     background: #222;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
@@ -21,9 +26,28 @@
     display: flex;
     flex-direction: column;
     align-items: center; /* Centrer les cartes à l'intérieur de la colonne */
-  }
-  
-  /* Style pour la section des cartes à l'intérieur des colonnes */
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative; /* Position pour le bouton "Delete" */
+}
+
+.column h2, .column h3 {
+    font-size: 1.5vw;
+    color: #000000;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-family: Poppins, sans-serif;
+}
+
+.column h3 {
+    font-size: 1.2em;
+    color: #333;
+    font-weight: 600;
+}
+
+/* Style pour la section des cartes à l'intérieur des colonnes */
 .cards {
     margin: 20px;
     display: flex;
@@ -31,51 +55,67 @@
     gap: 15px;
     width: 100%; /* Assure que les cartes prennent toute la largeur de la colonne */
     margin-bottom: 20px;
+    margin-top: 10px;
 }
 
+.card {
+    background: #ffffff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: Poppins, sans-serif;
+    font-weight: 500;
+    font-size: 0.7em;
+}
 
-  
-  .card:hover {
+.card:hover {
     transform: translateY(-5px); /* Légère élévation au survol */
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Ombre plus forte au survol */
-  }
-  
-  /* Style pour les titres des colonnes */
-  .column h2 {
-    font-size: 1.5vw;
-    color: #000000;
-    margin-bottom: 10px;
-    font-weight: bold;
-    font-family: Poppins, sans-serif;
-  }
-  
-  /* Style des textes des cartes */
-  .card p {
-    font-size: 0.7rem;
+}
+
+/* Style des textes des cartes */
+.card p {
+    font-size: 0.8rem;
     line-height: 1.5;
     color: #000000;
     white-space: pre-line; /* Conserve les retours à la ligne */
-  }
-  
-  /* Media queries pour responsive */
-  @media (max-width: 768px) {
-    .tv-display {
-      padding: 10px;
-      flex-direction: column;
-      align-items: center; /* Aligner les colonnes verticalement sur les petits écrans */
-    }
-  
-    .column {
-      width: 80%; /* Colonne plus large sur petits écrans */
-      margin-bottom: 20px;
-    }
-  
-    .card {
-      padding: 15px;
-    }
-  }
+}
 
-  /* Enlever le soulignement et la couleur du lien */
+.card-title {
+    font-weight: bold;
+    text-decoration: underline;
+    text-align: left;  /* Justification à gauche */
+    margin-bottom: 10px;
+    width: 100%;  /* Ajouter cette ligne pour forcer la largeur du titre */
+}
+
+.card-content {
+    text-align: left;  /* Assurez-vous que le texte est bien aligné à gauche */
+    margin-bottom: 15px;
+    width: 100%;  /* Ajouter cette ligne pour forcer la largeur du contenu */
+}
+
+.card-author {
+    font-size: 0.7rem;
+    color: #555;
+    text-align: right;
+    margin-top: 10px;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between; /* Espace entre le bouton et l'auteur */
+    align-items: center; /* Centrer verticalement */
+    margin-top: 10px;
+}
+
+.card-container {
+    position: relative;
+    display: inline-block;
+}
+
 .card-link {
     text-decoration: none; /* Supprime le soulignement */
     color: inherit; /* Hérite de la couleur du parent (par exemple, du texte de la carte) */
@@ -86,12 +126,7 @@
     color: inherit; /* Assurer que la couleur ne change pas au survol */
 }
 
-.card-container {
-    position: relative;
-    display: inline-block;
-  }
-  
-  .delete-button {
+.delete-button, .btndeletecard, .btnDeleteColumn {
     position: absolute;
     top: 5px;
     right: 5px;
@@ -108,139 +143,55 @@
     align-items: center;
     justify-content: center;
     z-index: 10;
-  }
-  
-  .delete-button:hover {
-    background-color: darkred;
-  }
-
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
-
-.management-panel {
-
-    background-color: #f4f4f4;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .columns {
-    display: flex;
-    justify-content: center; /* Centre les colonnes horizontalement */
-    gap: 20px; /* Espacement constant entre les colonnes */
-    flex-wrap: wrap; /* Permet de passer à la ligne si nécessaire */
-  }
-  
-  .column {
-    flex: 1; /* Permet aux colonnes de prendre tout l'espace disponible */
-    min-width: 200px; /* Définit une largeur minimale */
-    background: #fff;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: relative; /* Position pour le bouton "Delete" */
-  }
-    
-
-  
-  .column h3 {
-    font-size: 1.2em;
-    margin-bottom: 10px;
-    color: #333;
-    font-family: Poppins, sans-serif;
-    font-weight: 600;
-  }
-  
-  /* Nouveau style pour le bouton Delete Column */
-  .btnDeleteColumn {
-    position: absolute;
-    top: 5px; /* Placer légèrement plus près du haut */
-    right: 5px; /* Placer légèrement plus près du bord droit */
-    width: 22px; /* Largeur du bouton */
-    height: 22px; /* Hauteur du bouton */
-    background-color: #ff4d4d;
-    color: white;
-    font-size: 18px; /* Taille de la croix */
-    font-weight: bold;
-    text-align: center;
-    line-height: 22px; /* Centrer verticalement la croix */
-    border-radius: 50%; /* Rendre le bouton rond */
-    border: none;
-    cursor: pointer;
-    padding: 0; /* Enlever le padding par défaut */
-    display: flex; /* Utilisation de flex pour centrer l'élément */
-    justify-content: center; /* Centrer horizontalement */
-    align-items: center; /* Centrer verticalement */
-  }
-  
-  .btnDeleteColumn:hover {
-    background-color: #ff1a1a;
-  }
-  
-  .cards {
-    margin-top: 10px;
-  }
-  
-.card {
-  background: #ffffff;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  position: relative;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-family: Poppins, sans-serif;
-  font-weight: 500;
-  font-size: 0.7em;
-
-}
-
-.card-title {
-  font-weight: bold;
-  text-decoration: underline;
-  text-align: left;  /* Justification à gauche */
-  margin-bottom: 10px;
-  width: 100%;  /* Ajouter cette ligne pour forcer la largeur du titre */
-}
-
-.card-content {
-  text-align: left;  /* Assurez-vous que le texte est bien aligné à gauche */
-  margin-bottom: 15px;
-  width: 100%;  /* Ajouter cette ligne pour forcer la largeur du contenu */
-}
-  
-.card-container {
-    position: relative;
-    display: inline-block;
-}
-
-.btndeletecard {
-    position: absolute;
-    top: 6px;
-    right: 5px;
-    width: 20px;
-    height: 20px;
-    background-color: red;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
     line-height: 1; /* Assure que le "X" est centré verticalement */
     padding: 0;
 }
 
-.btndeletecard:hover {
+.delete-button:hover, .btndeletecard:hover, .btnDeleteColumn:hover {
     background-color: darkred;
 }
-  
-  /* Boutons génériques (sans classe spécifique) */
-  button {
+
+.btnDeleteColumn {
+    width: 22px; /* Largeur du bouton */
+    height: 22px; /* Hauteur du bouton */
+    font-size: 18px; /* Taille de la croix */
+    line-height: 22px; /* Centrer verticalement la croix */
+}
+
+.management-panel {
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.columns {
+    display: flex;
+    justify-content: center; /* Centre les colonnes horizontalement */
+    gap: 100vh; /* Espacement constant entre les colonnes */
+    flex-wrap: wrap; /* Permet de passer à la ligne si nécessaire */
+}
+
+/* Media queries pour responsive */
+@media (max-width: 768px) {
+    .tv-display {
+        padding: 10px;
+        flex-direction: column;
+        align-items: center; /* Aligner les colonnes verticalement sur les petits écrans */
+    }
+
+    .column {
+        width: 80%; /* Colonne plus large sur petits écrans */
+        margin-bottom: 20px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+}
+
+/* Boutons génériques (sans classe spécifique) */
+button {
     background-color: #28a745; /* Vert */
     color: white;
     border: none;
@@ -249,22 +200,21 @@
     font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s ease; /* Transition douce */
-  }
-  
-  button:hover {
-    background-color: #218838; /* Vert foncé pour le hover */
-  }
-  
-  /* Améliorations supplémentaires */
-  button:focus {
-    outline: none; /* Supprimer le contour bleu par défaut */
-  }
-  
-  button:active {
-    transform: scale(0.98); /* Légère réduction de taille lors du clic pour un effet visuel */
-  }
+}
 
-  .popup-overlay {
+button:hover {
+    background-color: #218838; /* Vert foncé pour le hover */
+}
+
+button:focus {
+    outline: none; /* Supprimer le contour bleu par défaut */
+}
+
+button:active {
+    transform: scale(0.98); /* Légère réduction de taille lors du clic pour un effet visuel */
+}
+
+.popup-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -275,46 +225,46 @@
     justify-content: center;
     align-items: center;
     z-index: 999;
-  }
-  
-  .popup-content {
+}
+
+.popup-content {
     background: #fff;
     padding: 20px;
     border-radius: 8px;
     width: 400px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .popup-content h3 {
+}
+
+.popup-content h3 {
     margin-top: 0;
     text-align: center;
-  }
-  
-  .form-actions {
+}
+
+.form-actions {
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
-  }
-  
-  input,
-  textarea {
+}
+
+input,
+textarea {
     width: 95%;
     padding: 8px;
     margin-top: 5px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-  }
+}
 
-  .btncancel {
+.btncancel {
     background-color: #dc3545; /* Rouge */
-  }
+}
 
-  .btncancel:hover {
+.btncancel:hover {
     background-color: #c82333; /* Rouge foncé pour le hover */
-  }
+}
 
-  .btnupdatecard {
+.btnupdatecard {
     background-color: #3498db;
     color: white;
     border: none;
@@ -322,94 +272,89 @@
     border-radius: 5px;
     cursor: pointer;
     margin-left: 5px;
-  }
-  
-  .btnupdatecard:hover {
-    background-color: #2980b9;
-  }
+}
 
-  .card-buttons {
+.btnupdatecard:hover {
+    background-color: #2980b9;
+}
+
+.card-buttons {
     display: flex;
     justify-content: space-between; /* Espacement égal entre les boutons */
     width: 100%; /* Prendre toute la largeur de la carte */
     margin-top: 10px; /* Espacement au-dessus des boutons */
     gap: 20%; /* Espacement entre les boutons */
-  }
-  
-  .card-buttons button {
+}
+
+.card-buttons button {
     flex: 1; /* Chaque bouton prend une largeur égale */
     padding: 5px 10px;
     font-size: 0.9em;
     cursor: pointer;
-  }
-  
-  .card-buttons .btnupdatecard {
+}
+
+.card-buttons .btnupdatecard {
     background-color: #4CAF50; /* Vert pour le bouton 'Update' */
     color: white;
-  }
-  
-  .card-buttons .btndeletecard {
+}
+
+.card-buttons .btndeletecard {
     background-color: #f44336; /* Rouge pour le bouton 'Delete' */
     color: white;
-  }
-  
-  .card-buttons button:hover {
+}
+
+.card-buttons button:hover {
     opacity: 0.8; /* Légère transparence au survol */
-  }
+}
 
-  .card-author {
-    font-size: 0.7rem;
-    color: #555;
-    text-align: right;
-    margin-top: 10px;
-  }
-
-  .card-footer {
-    display: flex;
-    justify-content: space-between; /* Espace entre le bouton et l'auteur */
-    align-items: center; /* Centrer verticalement */
-    margin-top: 10px;
-  }
-
-  .btn-status {
+.btn-status {
     border: none;
     padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
-  }
+}
 
-  .btn-status-red {
+.btn-status-red {
     background-color: red;
+    padding: 7px;
     color: white;
-  }
+}
 
-  .btn-status-red:hover {
+.btn-status-red:hover {
     background-color: darkred;
-  }
+}
 
-  .btn-status-green {
+.btn-status-green {
     background-color: green;
+    padding: 7px;
     color: white;
-  }
+}
 
-  .btn-status-green:hover {
+.btn-status-green:hover {
     background-color: darkgreen;
     color: white;
-  }
+}
 
-
-  .column.prepa-commande {
+.column.prepa-commande {
     background-color: #B3E5FC; /* Bleu pastel */
+    margin-right: 20px;
 }
 
 .column.stock {
     background-color: #C8E6C9; /* Vert pastel */
+    margin-right: 20px;
 }
 
 .column.inter {
     background-color: #FFF9C4; /* Jaune pastel */
+    margin-right: 20px;
 }
 
 .column.rappel {
     background-color: #fb8787; /* Rose pastel */
+}
+
+/* Style pour les cartes de la société "Thomas" */
+.card.company-thomas {
+    background-color: #d6d6d6; /* Gris */
 }

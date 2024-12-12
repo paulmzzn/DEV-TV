@@ -1,5 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
 
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f4f4f4;
+}
+
 .management-panel {
 
     background-color: #f4f4f4;
@@ -249,3 +255,73 @@
   .card-status.available {
     color: red;
   }
+
+
+  /* Media queries pour responsive */
+/* Media queries pour responsive */
+/* Media queries pour responsive */
+/* Media queries pour responsive */
+/* Media queries pour responsive */
+@media (max-width: 768px) {
+  .columns {
+    flex-direction: column;
+    align-items: center; /* Aligner les colonnes verticalement sur les petits écrans */
+    width: 100%; /* Assurer que les colonnes prennent toute la largeur disponible */
+    margin: 0; /* Enlever les marges */
+  }
+
+  .column {
+    width: 95%; /* Colonne plus large sur petits écrans pour prendre plus d'espace disponible */
+    margin-bottom: 20px;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+
+  .card-content,
+  .card-footer,
+  .card-buttons,
+  .card-link {
+    display: none; /* Masquer initialement le contenu, les boutons et le lien des cartes */
+  }
+
+  .card.expanded .card-content,
+  .card.expanded .card-footer,
+  .card.expanded .card-buttons,
+  .card.expanded .card-link {
+    display: block; /* Afficher le contenu, les boutons et le lien des cartes lorsqu'elles sont développées */
+  }
+
+  .expand-btn {
+    display: block;
+    margin-top: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+
+  .expand-btn:hover {
+    background-color: #0056b3;
+  }
+}
+
+@media (min-width: 769px) {
+  .expand-btn {
+    display: none; /* Cacher le bouton "Développer" sur les grands écrans */
+  }
+}
+
+/* Empêcher le zoom sur les champs de formulaire */
+input, textarea {
+  font-size: 16px; /* Taille de police suffisante pour empêcher le zoom sur les petits écrans */
+}

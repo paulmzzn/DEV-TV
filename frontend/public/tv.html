@@ -14,8 +14,8 @@
       <h3>Entrez votre nom</h3>
       <input type="text" id="username-input" placeholder="Votre nom" autocomplete="given-name">
       <div class="form-actions">
-        <button class='btn-status-red'id="cancel-btn">Annuler</button>
-        <button class='btn-status-green' id="submit-btn" >Valider</button>
+        <button class='btn-status-red' id="cancel-btn">Annuler</button>
+        <button class='btn-status-green' id="submit-btn">Valider</button>
       </div>
     </div>
   </div>
@@ -102,6 +102,12 @@
 
             const cardElement = document.createElement('div');
             cardElement.className = 'card';
+
+            // Ajouter une classe pour les cartes de la société "Thomas"
+            if (card.societe === 'Thomas') {
+              cardElement.classList.add('company-thomas');
+            }
+
             cardElement.innerHTML = `
               <h4 class="card-title">${card.title}</h4>
               <p>${card.content}</p>
@@ -113,9 +119,14 @@
 
             if (card.link) {
               const cardLink = document.createElement('a');
-              cardLink.href = card.link;
+              cardLink.href = card.status.startsWith('En cours') ? card.link : '#';
               cardLink.rel = 'noopener noreferrer';
               cardLink.className = 'card-link';
+              if (!card.status.startsWith('En cours')) {
+                cardLink.classList.add('disabled-link');
+              } else {
+                cardLink.target = '_blank'; // Ouvrir dans un nouvel onglet si la carte est "En cours"
+              }
 
               cardLink.appendChild(cardElement);
               cardContainer.appendChild(cardLink);

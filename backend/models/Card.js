@@ -8,6 +8,7 @@ const cardSchema = new Schema({
   link: { type: String, required: false },  // Ajoutez un champ link
   author : { type: String, required: false }, // Ajoutez un champ author
   status : { type: String, required: false, default: 'Disponible' }, // Ajoutez un champ statut
+  societe : { type: String, required: false, default: 'François'}, // Ajoutez un champ societe
 });
 
 const Card = mongoose.model('Card', cardSchema);
