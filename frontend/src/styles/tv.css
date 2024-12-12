@@ -15,8 +15,8 @@
   .column {
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    min-width: 200px; /* Limite la largeur minimale des colonnes */
-    flex: 1 1 400px; /* Les colonnes se redimensionnent dynamiquement */
+    min-width: 100px; /* Limite la largeur minimale des colonnes */
+    flex: 1 1 200px; /* Les colonnes se redimensionnent dynamiquement */
     display: flex;
     flex-direction: column;
     align-items: center; /* Centrer les cartes à l'intérieur de la colonne */

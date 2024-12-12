@@ -101,8 +101,8 @@
               <h4 class="card-title">${card.title}</h4>
               <p>${card.content}</p>
               <div class="card-footer">
-                <button class="btn-status ${card.status === 'Disponible' ? 'btn-status-red' : 'btn-status-green'}">${card.status || '???'}</button>
-                <p class="card-author">Auteur : ${card.author || '???'}</p>
+                <button class="btn-status ${card.status === 'Disponible' ? 'btn-status-red' : 'btn-status-green'}"><b>${card.status || '???'}</b></button>
+                <p class="card-author">Auteur : <b>${card.author || '???'}</b></p>
               </div>
             `;
 
