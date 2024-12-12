@@ -27,18 +27,27 @@ const ManagementPanel = () => {
     societe: '',
   });
 
+  const fetchColumns = async () => {
+    try {
+      const response = await fetch('http://87.106.130.160/api/columns');
+      const data = await response.json();
+      setColumns(data);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des colonnes:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchColumns = async () => {
-      try {
-        const response = await fetch('http://87.106.130.160/api/columns');
-        const data = await response.json();
-        setColumns(data);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des colonnes:', error);
-      }
-    };
     fetchColumns();
-  }, []);
+
+    const intervalId = setInterval(() => {
+      if (!showCardForm && !showEditCardForm) {
+        fetchColumns();
+      }
+    }, 20000); // 10 minutes
+
+    return () => clearInterval(intervalId);
+  }, [showCardForm, showEditCardForm]);
 
   const addColumn = async () => {
     const title = prompt('Enter column title:');
