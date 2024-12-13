@@ -42,7 +42,7 @@ const cardsRoutes = require('./routes/cards');
 const loginRoutes = require('./routes/user');
 
 // Applique le middleware d'auth pour toutes les routes API
-app.use('/' , loginRoutes);
+app.use('/api' , loginRoutes);
 app.use('/api/columns', authMiddleware, columnsRoutes);
 app.use('/api/cards', authMiddleware, cardsRoutes);
 
