@@ -27,6 +27,10 @@ const ManagementPanel = () => {
     status: '',
     societe: '',
   });
+  const [showDeleteColumnPopup, setShowDeleteColumnPopup] = useState(false);
+  const [showDeleteCardPopup, setShowDeleteCardPopup] = useState(false);
+  const [columnToDelete, setColumnToDelete] = useState(null);
+  const [cardToDelete, setCardToDelete] = useState({ columnId: null, cardId: null });
   
   const fetchColumns = useCallback(async () => {
     try {
@@ -74,7 +78,19 @@ const ManagementPanel = () => {
     setColumns([...columns, newColumn]);
   };
 
-  const deleteColumn = async (id) => {
+  const confirmDeleteColumn = (id) => {
+    setColumnToDelete(id);
+    setShowDeleteColumnPopup(true);
+  };
+
+  const confirmDeleteCard = (columnId, cardId) => {
+    setCardToDelete({ columnId, cardId });
+    setShowDeleteCardPopup(true);
+  };
+
+  const deleteColumn = async () => {
+    const id = columnToDelete;
+    setShowDeleteColumnPopup(false);
     try {
       await fetch(`http://87.106.130.160/api/columns/${id}`, {
         method: 'DELETE',
@@ -86,6 +102,33 @@ const ManagementPanel = () => {
       setColumns(columns.filter((column) => column._id !== id));
     } catch (error) {
       console.error('Erreur lors de la suppression de la colonne:', error);
+    }
+  };
+
+  const deleteCard = async () => {
+    const { columnId, cardId } = cardToDelete;
+    setShowDeleteCardPopup(false);
+    try {
+      await fetch(`http://87.106.130.160/api/cards/${cardId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+        }
+      });
+
+      const updatedColumns = columns.map((column) => {
+        if (column._id === columnId) {
+          return {
+            ...column,
+            cards: column.cards.filter((card) => card._id !== cardId),
+          };
+        }
+        return column;
+      });
+
+      setColumns(updatedColumns);
+    } catch (error) {
+      console.error('Erreur lors de la suppression de la carte:', error);
     }
   };
 
@@ -132,31 +175,6 @@ const ManagementPanel = () => {
       setCardData({ title: '', content: '', link: '', author: '', status: '', societe: '' });
     } catch (error) {
       console.error('Erreur lors de l\'ajout de la carte:', error);
-    }
-  };
-
-  const deleteCard = async (columnId, cardId) => {
-    try {
-      await fetch(`http://87.106.130.160/api/cards/${cardId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
-        }
-      });
-
-      const updatedColumns = columns.map((column) => {
-        if (column._id === columnId) {
-          return {
-            ...column,
-            cards: column.cards.filter((card) => card._id !== cardId),
-          };
-        }
-        return column;
-      });
-
-      setColumns(updatedColumns);
-    } catch (error) {
-      console.error('Erreur lors de la suppression de la carte:', error);
     }
   };
 
@@ -337,7 +355,7 @@ const ManagementPanel = () => {
             <h3>{column.title}</h3>
             <button
               className="btnDeleteColumn"
-              onClick={() => deleteColumn(column._id)}
+              onClick={() => confirmDeleteColumn(column._id)}
             >
               x
             </button>
@@ -377,7 +395,7 @@ const ManagementPanel = () => {
                     <button className="btnupdatecard" onClick={() => openEditCardForm(card)}>
                       Update Card
                     </button>
-                    <button className="btndeletecard" onClick={() => deleteCard(column._id, card._id)}>
+                    <button className="btndeletecard" onClick={() => confirmDeleteCard(column._id, card._id)}>
                       Delete Card
                     </button>
                   </div>
@@ -529,8 +547,32 @@ const ManagementPanel = () => {
           </div>
         </div>
       )}
-    </div>
+
+    {showDeleteColumnPopup && (
+          <div className="popup-overlay">
+            <div className="popup-content">
+              <h3>Êtes-vous sûr de vouloir supprimer cette colonne ?</h3>
+              <div className="form-actions">
+                <button className="btncancel" onClick={() => setShowDeleteColumnPopup(false)}>Annuler</button>
+                <button className="btndelete" onClick={deleteColumn}>Supprimer</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showDeleteCardPopup && (
+          <div className="popup-overlay">
+            <div className="popup-content">
+              <h3>Êtes-vous sûr de vouloir supprimer cette carte ?</h3>
+              <div className="form-actions">
+                <button className="btncancel" onClick={() => setShowDeleteCardPopup(false)}>Annuler</button>
+                <button className="btndelete" onClick={deleteCard}>Supprimer</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
   );
-};
+}
 
 export default ManagementPanel;

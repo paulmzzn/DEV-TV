@@ -32,16 +32,30 @@
     </div>
   </div>
 
+  <div id="delete-card-popup" class="popup-overlay" style="display: none;">
+    <div class="popup-content">
+      <h3>Êtes-vous sûr de vouloir supprimer cette carte ?</h3>
+      <div class="form-actions">
+        <button class="btn-status-red" id="delete-card-cancel-btn">Annuler</button>
+        <button class="btn-status-green" id="delete-card-confirm-btn">Supprimer</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     (function () {
       const tvDisplay = document.getElementById('tv-display');
       const popupOverlay = document.getElementById('popup-overlay');
       const loginPopup = document.getElementById('login-popup');
+      const deleteCardPopup = document.getElementById('delete-card-popup');
       const submitBtn = document.getElementById('submit-btn');
       const cancelBtn = document.getElementById('cancel-btn');
       const loginSubmitBtn = document.getElementById('login-submit-btn');
       const loginCancelBtn = document.getElementById('login-cancel-btn');
+      const deleteCardCancelBtn = document.getElementById('delete-card-cancel-btn');
+      const deleteCardConfirmBtn = document.getElementById('delete-card-confirm-btn');
       let currentCardId = null;
+      let cardToDelete = { columnId: null, cardId: null };
 
       const showLoginPopup = () => {
         loginPopup.style.display = 'flex';
@@ -98,10 +112,10 @@
         }
       };
 
-      const deleteCard = async (columnId, cardId) => {
+      const deleteCard = async () => {
         try {
           const token = localStorage.getItem('jwt_token');
-          await fetch(`http://87.106.130.160/api/cards/${cardId}`, {
+          await fetch(`http://87.106.130.160/api/cards/${cardToDelete.cardId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
           });
@@ -159,7 +173,10 @@
             const deleteButton = document.createElement('button');
             deleteButton.className = 'btndeletecard';
             deleteButton.innerHTML = '&times;';
-            deleteButton.addEventListener('click', () => deleteCard(column._id, card._id));
+            deleteButton.addEventListener('click', () => {
+              cardToDelete = { columnId: column._id, cardId: card._id };
+              deleteCardPopup.style.display = 'flex';
+            });
 
             const cardElement = document.createElement('div');
             cardElement.className = 'card';
@@ -206,6 +223,15 @@
         console.log('Cancel button clicked.');
         popupOverlay.style.display = 'none';
         document.getElementById('username-input').value = '';
+      });
+
+      deleteCardCancelBtn.addEventListener('click', () => {
+        deleteCardPopup.style.display = 'none';
+      });
+
+      deleteCardConfirmBtn.addEventListener('click', () => {
+        deleteCard();
+        deleteCardPopup.style.display = 'none';
       });
 
       fetchColumns();
