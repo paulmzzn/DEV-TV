@@ -7,7 +7,7 @@ const cardSchema = new Schema({
   columnId: { type: mongoose.Schema.Types.ObjectId, ref: 'Column'},
   link: { type: String, required: false },  // Ajoutez un champ link
   author : { type: String, required: false }, // Ajoutez un champ author
-  status : { type: String, required: false, default: 'Disponible' }, // Ajoutez un champ statut
+  status : { type: String, required: false, default: 'À faire' }, // Ajoutez un champ statut
   societe : { type: String, required: false, default: 'François'}, // Ajoutez un champ societe
 });
 

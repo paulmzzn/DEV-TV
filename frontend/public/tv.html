@@ -20,218 +20,197 @@
     </div>
   </div>
 
-  <div id="auth-popup-overlay" class="popup-overlay" style="display: none;">
+  <div id="login-popup" class="popup-overlay" style="display: none;">
     <div class="popup-content">
-      <h3>Authentification requise</h3>
-      <input type="text" id="auth-username" placeholder="Nom d'utilisateur" autocomplete="username">
-      <input type="password" id="auth-password" placeholder="Mot de passe" autocomplete="current-password">
+      <h3>Connexion</h3>
+      <input type="text" id="login-username" placeholder="Nom d'utilisateur">
+      <input type="password" id="login-password" placeholder="Mot de passe">
       <div class="form-actions">
-        <button class="btn-status-red" id="auth-cancel-btn">Annuler</button>
-        <button class="btn-status-green" id="auth-submit-btn">Valider</button>
+        <button class='btn-status-red' id="login-cancel-btn">Annuler</button>
+        <button class='btn-status-green' id="login-submit-btn">Se connecter</button>
       </div>
     </div>
   </div>
 
   <script>
     (function () {
-  const tvDisplay = document.getElementById('tv-display');
-  const popupOverlay = document.getElementById('popup-overlay');
-  const submitBtn = document.getElementById('submit-btn');
-  const cancelBtn = document.getElementById('cancel-btn');
-  const authPopupOverlay = document.getElementById('auth-popup-overlay');
-  const authSubmitBtn = document.getElementById('auth-submit-btn');
-  const authCancelBtn = document.getElementById('auth-cancel-btn');
-  let currentCardId = null;
-  let currentColumnId = null;
-  let authCredentials = null;
+      const tvDisplay = document.getElementById('tv-display');
+      const popupOverlay = document.getElementById('popup-overlay');
+      const loginPopup = document.getElementById('login-popup');
+      const submitBtn = document.getElementById('submit-btn');
+      const cancelBtn = document.getElementById('cancel-btn');
+      const loginSubmitBtn = document.getElementById('login-submit-btn');
+      const loginCancelBtn = document.getElementById('login-cancel-btn');
+      let currentCardId = null;
 
-  const fetchColumns = async () => {
-    try {
-      const response = await fetch('http://192.168.1.47:3000/api/columns', {
-        headers: authCredentials ? {
-          'Authorization': 'Basic ' + btoa(authCredentials.username + ':' + authCredentials.password)
-        } : {}
-      });
+      const showLoginPopup = () => {
+        loginPopup.style.display = 'flex';
+      };
 
-      if (response.status === 401) {
-        showAuthPopup();
-        return;
-      }
+      loginSubmitBtn.addEventListener('click', async () => {
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value.trim();
 
-      const columns = await response.json();
-      console.log('Columns fetched:', columns);
-      updateUI(columns);
-    } catch (error) {
-      console.error('Erreur lors de la récupération des colonnes:', error);
-    }
-  };
+        if (username && password) {
+          try {
+            const response = await fetch('http://localhost:3000/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ username, password })
+            });
 
-  const deleteCard = async (columnId, cardId) => {
-    try {
-      console.log(`Deleting card ${cardId} from column ${columnId}...`);
-      await fetch(`http://192.168.1.47:3000/api/cards/${cardId}`, {
-        method: 'DELETE',
-        headers: authCredentials ? {
-          'Authorization': 'Basic ' + btoa(authCredentials.username + ':' + authCredentials.password)
-        } : {}
-      });
-      console.log(`Card ${cardId} deleted.`);
-      fetchColumns(); // Rafraîchit l'interface après suppression
-    } catch (error) {
-      console.error('Erreur lors de la suppression de la carte:', error);
-    }
-  };
+            const result = await response.json();
 
-  const updateCardStatus = async (cardId, newStatus) => {
-    try {
-      console.log(`Updating status of card ${cardId} to ${newStatus}...`);
-      const response = await fetch(`http://192.168.1.47:3000/api/cards/${cardId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(authCredentials ? {
-            'Authorization': 'Basic ' + btoa(authCredentials.username + ':' + authCredentials.password)
-          } : {})
-        },
-        body: JSON.stringify({ status: newStatus })
-      });
-
-      if (response.status === 401) {
-        showAuthPopup();
-        return;
-      }
-      
-      const result = await response.json();
-      console.log(`Status of card ${cardId} updated to ${newStatus}. API Response:`, result);
-
-      if (response.ok) {
-        fetchColumns(); // Rafraîchit l'interface après mise à jour
-      } else {
-        console.error('Erreur lors de la mise à jour du statut de la carte:', result);
-      }
-    } catch (error) {
-      console.error('Erreur lors de la mise à jour du statut de la carte:', error);
-    }
-  };
-
-  const updateUI = (columns) => {
-    console.log('Updating UI...');
-    tvDisplay.innerHTML = ''; // Réinitialise l'affichage
-    columns.forEach(column => {
-      console.log(`Processing column: ${column.title}`);
-      const columnElement = document.createElement('div');
-      columnElement.className = 'column';
-
-      const columnClass = column.title.replace(/\s+/g, '-').toLowerCase();
-      columnElement.classList.add(columnClass);
-
-      columnElement.innerHTML = `<h2>${column.title}</h2>`;
-
-      const cardsContainer = document.createElement('div');
-      cardsContainer.className = 'cards';
-
-      column.cards.forEach(card => {
-        console.log(`Processing card: ${card.title}`);
-        const cardContainer = document.createElement('div');
-        cardContainer.className = 'card-container';
-
-        const deleteButton = document.createElement('button');
-        deleteButton.className = 'btndeletecard';
-        deleteButton.innerHTML = '&times;';
-        deleteButton.addEventListener('click', () => deleteCard(column._id, card._id));
-
-        const cardElement = document.createElement('div');
-        cardElement.className = 'card';
-        if (card.societe === 'Thomas') {
-          cardElement.classList.add('company-thomas');
+            if (response.ok) {
+              localStorage.setItem('jwt_token', result.token);
+              loginPopup.style.display = 'none';
+              fetchColumns();
+            } else {
+              alert(result.message);
+            }
+          } catch (error) {
+            console.error('Erreur lors de la connexion:', error);
+          }
         }
+      });
 
-        cardElement.innerHTML = `
-          <h4 class="card-title">${card.title}</h4>
-          <p>${card.content}</p>
-          <div class="card-footer">
-            <button class="btn-status ${card.status === 'À faire' ? 'btn-status-red' : 'btn-status-green'}"><b>${card.status || '???'}</b></button>
-            <p class="card-author">Auteur : <b>${card.author || '???'}</b></p>
-          </div>
-        `;
+      loginCancelBtn.addEventListener('click', () => {
+        loginPopup.style.display = 'none';
+      });
 
-        if (card.link) {
-          const cardLink = document.createElement('a');
-          cardLink.href = card.status.startsWith('En cours') ? card.link : '#';
-          cardLink.rel = 'noopener noreferrer';
-          cardLink.className = 'card-link';
-          if (!card.status.startsWith('En cours')) {
-            cardLink.classList.add('disabled-link');
+      const fetchColumns = async () => {
+        try {
+          const token = localStorage.getItem('jwt_token');
+          const response = await fetch('http://localhost:3000/api/columns', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          const columns = await response.json();
+          if (response.ok) {
+            updateUI(columns);
           } else {
-            cardLink.target = '_blank';
+            if (response.status === 401|| response.status === 403) {
+              showLoginPopup();
+            }
           }
-
-          cardLink.appendChild(cardElement);
-          cardContainer.appendChild(cardLink);
-        } else {
-          cardContainer.appendChild(cardElement);
+        } catch (error) {
+          console.error('Erreur lors de la récupération des colonnes:', error);
+          showLoginPopup();
         }
+      };
 
-        cardElement.querySelector('.btn-status').addEventListener('click', () => {
-          console.log(`Status button clicked for card ${card._id}...`);
-          if (card.status === 'À faire') {
-            console.log('Card is available. Showing popup...');
-            popupOverlay.style.display = 'flex';
-            currentCardId = card._id;
-            currentColumnId = column._id;
+      const deleteCard = async (columnId, cardId) => {
+        try {
+          const token = localStorage.getItem('jwt_token');
+          await fetch(`http://localhost:3000/api/cards/${cardId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          fetchColumns();
+        } catch (error) {
+          console.error('Erreur lors de la suppression de la carte:', error);
+          showLoginPopup();
+        }
+      };
+
+      const updateCardStatus = async (cardId, newStatus) => {
+        try {
+          const token = localStorage.getItem('jwt_token');
+          const response = await fetch(`http://localhost:3000/api/cards/${cardId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ status: newStatus })
+          });
+
+          if (!response.ok) {
+            throw new Error('Erreur lors de la mise à jour du statut');
           }
-        });
 
-        cardContainer.appendChild(deleteButton);
-        cardsContainer.appendChild(cardContainer);
+          fetchColumns();
+        } catch (error) {
+          console.error('Erreur lors de la mise à jour du statut de la carte:', error);
+          showLoginPopup();
+        }
+      };
+
+      const updateUI = (columns) => {
+        console.log('Updating UI...');
+        tvDisplay.innerHTML = ''; // Réinitialise l'affichage
+        columns.forEach(column => {
+          console.log(`Processing column: ${column.title}`);
+          const columnElement = document.createElement('div');
+          columnElement.className = 'column';
+
+          const columnClass = column.title.replace(/\s+/g, '-').toLowerCase();
+          columnElement.classList.add(columnClass);
+
+          columnElement.innerHTML = `<h2>${column.title}</h2>`;
+
+          const cardsContainer = document.createElement('div');
+          cardsContainer.className = 'cards';
+
+          column.cards.forEach(card => {
+            console.log(`Processing card: ${card.title}`);
+            const cardContainer = document.createElement('div');
+            cardContainer.className = 'card-container';
+
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'btndeletecard';
+            deleteButton.innerHTML = '&times;';
+            deleteButton.addEventListener('click', () => deleteCard(column._id, card._id));
+
+            const cardElement = document.createElement('div');
+            cardElement.className = 'card';
+            cardElement.innerHTML = `
+              <h4 class="card-title">${card.title}</h4>
+              <p>${card.content}</p>
+              <div class="card-footer">
+                <button class="btn-status ${card.status === 'À faire' ? 'btn-status-red' : 'btn-status-green'}"><b>${card.status || '???'}</b></button>
+                <p class="card-author">Auteur : <b>${card.author || '???'}</b></p>
+              </div>
+            `;
+
+            cardElement.querySelector('.btn-status').addEventListener('click', () => {
+              console.log(`Status button clicked for card ${card._id}...`);
+              if (card.status === 'À faire') {
+                console.log('Card is available. Showing popup...');
+                popupOverlay.style.display = 'flex';
+                currentCardId = card._id;
+              }
+            });
+
+            cardContainer.appendChild(cardElement);
+            cardContainer.appendChild(deleteButton);
+            cardsContainer.appendChild(cardContainer);
+          });
+
+          columnElement.appendChild(cardsContainer);
+          tvDisplay.appendChild(columnElement);
+        });
+        console.log('UI updated.');
+      };
+
+      submitBtn.addEventListener('click', () => {
+        const username = document.getElementById('username-input').value.trim();
+        console.log(`Submit button clicked. Username: ${username}, currentCardId: ${currentCardId}`);
+        if (username && currentCardId) {
+          updateCardStatus(currentCardId, `En cours : ${username}`);
+          popupOverlay.style.display = 'none';
+          document.getElementById('username-input').value = '';
+        }
       });
 
-      columnElement.appendChild(cardsContainer);
-      tvDisplay.appendChild(columnElement);
-    });
-    console.log('UI updated.');
-  };
+      cancelBtn.addEventListener('click', () => {
+        console.log('Cancel button clicked.');
+        popupOverlay.style.display = 'none';
+        document.getElementById('username-input').value = '';
+      });
 
-  const showAuthPopup = () => {
-    authPopupOverlay.style.display = 'flex';
-  };
-
-  authSubmitBtn.addEventListener('click', () => {
-    const username = document.getElementById('auth-username').value.trim();
-    const password = document.getElementById('auth-password').value.trim();
-    console.log(`Auth submit button clicked. Username: ${username}`);
-    
-    if (username && password) {
-      authCredentials = { username, password };
-      authPopupOverlay.style.display = 'none';
       fetchColumns();
-    }
-  });
-
-  authCancelBtn.addEventListener('click', () => {
-    console.log('Auth cancel button clicked.');
-    authPopupOverlay.style.display = 'none';
-  });
-
-  submitBtn.addEventListener('click', () => {
-    const username = document.getElementById('username-input').value.trim();
-    console.log(`Submit button clicked. Username: ${username}, currentCardId: ${currentCardId}`);
-    if (username && currentCardId) {
-      updateCardStatus(currentCardId, `En cours : ${username}`);
-      popupOverlay.style.display = 'none';
-      document.getElementById('username-input').value = '';
-    }
-  });
-
-  cancelBtn.addEventListener('click', () => {
-    console.log('Cancel button clicked.');
-    popupOverlay.style.display = 'none';
-    document.getElementById('username-input').value = '';
-  });
-
-  fetchColumns();
-  setInterval(fetchColumns, 1000);
-})();
+      setInterval(fetchColumns, 1000);
+    })();
   </script>
 </body>
 </html>
