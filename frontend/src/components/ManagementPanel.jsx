@@ -7,6 +7,7 @@ import '../styles/tv.css';
 const ManagementPanel = () => {
   const [columns, setColumns] = useState([]);
   const [showCardForm, setShowCardForm] = useState(false); 
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [currentColumnId, setCurrentColumnId] = useState(null); 
   const [cardData, setCardData] = useState({
     title: '',
@@ -26,30 +27,23 @@ const ManagementPanel = () => {
     status: '',
     societe: '',
   });
-  const [authCredentials, setAuthCredentials] = useState(null);
-  const [showAuthPopup, setShowAuthPopup] = useState(false);
-
+  
   const fetchColumns = useCallback(async () => {
     try {
-      const response = await fetch('http://192.168.1.47:3000/api/columns', {
-        headers: authCredentials ? {
-          'Authorization': 'Basic ' + btoa(authCredentials.username + ':' + authCredentials.password)
-        } : {}
+      const token = localStorage.getItem('jwt_token');
+      const response = await fetch('http://localhost:3000/api/columns', {
+        headers: { 'Authorization': `Bearer ${token}` }
       });
-
-      if (response.status === 401) {
-        if (!showAuthPopup) {
-          setShowAuthPopup(true);
-        }
-        return;
-      }
-
       const data = await response.json();
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid data format');
+      }
       setColumns(data);
     } catch (error) {
       console.error('Erreur lors de la récupération des colonnes:', error);
+      setShowLoginPopup(true);
     }
-  }, [authCredentials, showAuthPopup]);
+  }, []);
 
   useEffect(() => {
     fetchColumns();
@@ -67,23 +61,14 @@ const ManagementPanel = () => {
     const title = prompt('Enter column title:');
     if (!title) return;
 
-    const res = await fetch('http://192.168.1.47:3000/api/columns', {
+    const res = await fetch('http://localhost:3000/api/columns', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(authCredentials ? {
-          'Authorization': 'Basic ' + btoa(authCredentials.username + ':' + authCredentials.password)
-        } : {})
+        'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
       },
       body: JSON.stringify({ title, cards: [] }),
     });
-
-    if (res.status === 401) {
-      if (!showAuthPopup) {
-        setShowAuthPopup(true);
-      }
-      return;
-    }
 
     const newColumn = await res.json();
     setColumns([...columns, newColumn]);
@@ -91,19 +76,12 @@ const ManagementPanel = () => {
 
   const deleteColumn = async (id) => {
     try {
-      const res = await fetch(`http://192.168.1.47:3000/api/columns/${id}`, {
+      await fetch(`http://localhost:3000/api/columns/${id}`, {
         method: 'DELETE',
-        headers: authCredentials ? {
-          'Authorization': 'Basic ' + btoa(authCredentials.username + ':' + authCredentials.password)
-        } : {}
-      });
-
-      if (res.status === 401) {
-        if (!showAuthPopup) {
-          setShowAuthPopup(true);
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
         }
-        return;
-      }
+      });
 
       setColumns(columns.filter((column) => column._id !== id));
     } catch (error) {
@@ -123,27 +101,19 @@ const ManagementPanel = () => {
       columnId: currentColumnId,
       link: cardData.link,
       author: cardData.author,
+      status: cardData.status || 'À faire',
       societe: cardData.societe,
     };
 
     try {
-      const res = await fetch('http://192.168.1.47:3000/api/cards', {
+      const res = await fetch('http://localhost:3000/api/cards', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(authCredentials ? {
-            'Authorization': 'Basic ' + btoa(authCredentials.username + ':' + authCredentials.password)
-          } : {})
+          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
         },
         body: JSON.stringify(newCardData),
       });
-
-      if (res.status === 401) {
-        if (!showAuthPopup) {
-          setShowAuthPopup(true);
-        }
-        return;
-      }
 
       const newCard = await res.json();
 
@@ -159,7 +129,7 @@ const ManagementPanel = () => {
 
       setColumns(updatedColumns);
       setShowCardForm(false);
-      setCardData({ title: '', content: '', link: '' });
+      setCardData({ title: '', content: '', link: '', author: '', status: '', societe: '' });
     } catch (error) {
       console.error('Erreur lors de l\'ajout de la carte:', error);
     }
@@ -167,19 +137,12 @@ const ManagementPanel = () => {
 
   const deleteCard = async (columnId, cardId) => {
     try {
-      const res = await fetch(`http://192.168.1.47:3000/api/cards/${cardId}`, {
+      await fetch(`http://localhost:3000/api/cards/${cardId}`, {
         method: 'DELETE',
-        headers: authCredentials ? {
-          'Authorization': 'Basic ' + btoa(authCredentials.username + ':' + authCredentials.password)
-        } : {}
-      });
-
-      if (res.status === 401) {
-        if (!showAuthPopup) {
-          setShowAuthPopup(true);
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
         }
-        return;
-      }
+      });
 
       const updatedColumns = columns.map((column) => {
         if (column._id === columnId) {
@@ -248,13 +211,11 @@ const ManagementPanel = () => {
 
   const updateCardColumn = async (cardId, newColumnId, cardToMove) => {
     try {
-      const response = await fetch(`http://192.168.1.47:3000/api/cards/${cardId}`, {
+      const response = await fetch(`http://localhost:3000/api/cards/${cardId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          ...(authCredentials ? {
-            'Authorization': 'Basic ' + btoa(authCredentials.username + ':' + authCredentials.password)
-          } : {})
+          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
         },
         body: JSON.stringify({
           title: cardToMove.title,
@@ -263,13 +224,6 @@ const ManagementPanel = () => {
           columnId: newColumnId,
         }),
       });
-
-      if (response.status === 401) {
-        if (!showAuthPopup) {
-          setShowAuthPopup(true);
-        }
-        return;
-      }
 
       if (!response.ok) {
         throw new Error('Erreur lors de la mise à jour de la carte');
@@ -294,13 +248,11 @@ const ManagementPanel = () => {
     }
 
     try {
-      const res = await fetch(`http://192.168.1.47:3000/api/cards/${editCardData.cardId}`, {
+      const res = await fetch(`http://localhost:3000/api/cards/${editCardData.cardId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          ...(authCredentials ? {
-            'Authorization': 'Basic ' + btoa(authCredentials.username + ':' + authCredentials.password)
-          } : {})
+          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
         },
         body: JSON.stringify({
           title: editCardData.title,
@@ -312,13 +264,6 @@ const ManagementPanel = () => {
           societe: editCardData.societe,
         }),
       });
-
-      if (res.status === 401) {
-        if (!showAuthPopup) {
-          setShowAuthPopup(true);
-        }
-        return;
-      }
 
       if (!res.ok) {
         const errorData = await res.json();
@@ -354,19 +299,28 @@ const ManagementPanel = () => {
     }
   };
 
-  const handleAuthSubmit = () => {
-    const username = document.getElementById('auth-username').value.trim();
-    const password = document.getElementById('auth-password').value.trim();
+  const handleLoginSubmit = async (username, password) => {
+    try {
+      const response = await fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-    if (username && password) {
-      setAuthCredentials({ username, password });
-      setShowAuthPopup(false);
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      const data = await response.json();
+      localStorage.setItem('jwt_token', data.token);
+      setShowLoginPopup(false);
       fetchColumns();
+    } catch (error) {
+      console.error('Erreur lors de la connexion:', error);
+      alert('Login failed, please try again.');
     }
-  };
-
-  const handleAuthCancel = () => {
-    setShowAuthPopup(false);
   };
 
   return (
@@ -414,12 +368,11 @@ const ManagementPanel = () => {
                       {card.link}
                     </a>
                   )}
-                  <div className="card-footer">
+                  <div className="card-footer"></div>
                     <p className={`card-status ${card.status === 'À faire' ? 'available' : 'unavailable'}`}>
                       <b>{card.status || '???'}</b>
                     </p>
                     <p className="card-author">Auteur : {card.author || '???'}</p>
-                  </div>
                   <div className="card-buttons">
                     <button className="btnupdatecard" onClick={() => openEditCardForm(card)}>
                       Update Card
@@ -559,15 +512,19 @@ const ManagementPanel = () => {
         </div>
       )}
 
-      {showAuthPopup && (
+      {showLoginPopup && (
         <div className="popup-overlay">
           <div className="popup-content">
-            <h3>Authentification requise</h3>
-            <input type="text" id="auth-username" placeholder="Nom d'utilisateur" autocomplete="username" />
-            <input type="password" id="auth-password" placeholder="Mot de passe" autocomplete="current-password" />
+            <h3>Connexion</h3>
+            <input type="text" id="login-username" placeholder="Nom d'utilisateur" />
+            <input type="password" id="login-password" placeholder="Mot de passe" />
             <div className="form-actions">
-              <button className="btn-status-red" onClick={handleAuthCancel}>Annuler</button>
-              <button className="btn-status-green" onClick={handleAuthSubmit}>Valider</button>
+              <button className='btn-status-red' onClick={() => setShowLoginPopup(false)}>Annuler</button>
+              <button className='btn-status-green' onClick={() => {
+                const username = document.getElementById('login-username').value.trim();
+                const password = document.getElementById('login-password').value.trim();
+                handleLoginSubmit(username, password);
+              }}>Se connecter</button>
             </div>
           </div>
         </div>
