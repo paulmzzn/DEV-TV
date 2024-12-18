@@ -205,6 +205,21 @@
 
           columnElement.appendChild(cardsContainer);
           tvDisplay.appendChild(columnElement);
+
+          // Check if total height of cards exceeds screen size and add 'reduced' class if necessary
+          if (window.innerWidth >= 1920 && window.innerHeight >= 1080) { // Apply only on 3840x2160 screens
+            let totalHeight = 0;
+            const cardContainers = cardsContainer.querySelectorAll('.card-container');
+            cardContainers.forEach(cardContainer => {
+              totalHeight += cardContainer.scrollHeight;
+            });
+
+            if (totalHeight > window.innerHeight) {
+              cardContainers.forEach(cardContainer => {
+                cardContainer.classList.add('reduced');
+              });
+            }
+          }
         });
         console.log('UI updated.');
       };
@@ -236,6 +251,11 @@
 
       fetchColumns();
       setInterval(fetchColumns, 1000);
+
+      // Refresh the page every 20 minutes (1200000 milliseconds)
+      setInterval(() => {
+        location.reload();
+      }, 1200000);
     })();
   </script>
 </body>

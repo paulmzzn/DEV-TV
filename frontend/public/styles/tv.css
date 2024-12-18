@@ -115,6 +115,22 @@ body {
 .card-container {
     position: relative;
     display: inline-block;
+    overflow: hidden;
+}
+
+.card-container.reduced .card {
+    height: 50px; /* Ajustez la hauteur selon vos besoins */
+    overflow: hidden;
+}
+  
+.card-container.reduced .card-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+  
+.card-container.reduced .card-footer {
+    display: none;
 }
 
 .card-link {
