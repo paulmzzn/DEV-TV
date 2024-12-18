@@ -161,8 +161,8 @@ const ManagementPanel = () => {
   };
 
   const addCard = async () => {
-    if (!cardData.title || !cardData.content) {
-      alert('Veuillez remplir tous les champs.');
+    if (!cardData.title) {
+      alert('Veuillez remplir le titre.');
       return;
     }
   

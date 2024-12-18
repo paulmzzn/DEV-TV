@@ -6,7 +6,7 @@ const createCard = async (req, res) => {
   try {
     const { title, content, columnId, link, author, status, societe } = req.body;
 
-    if (!title || !content || !columnId) {
+    if (!title || !columnId) {
       return res.status(400).json({ error: 'title, content, and columnId are required' });
     }
 

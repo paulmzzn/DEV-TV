@@ -137,6 +137,15 @@ body {
     display: none;
 }
 
+.card-container.reduced:hover .card {
+    height: auto; /* Expand the card to its normal height */
+    overflow: visible; /* Show the full content */
+}
+
+.card-container.reduced:hover .card-footer {
+    display: flex; /* Show the footer on hover */
+}
+
 .card-link {
     text-decoration: none; /* Supprime le soulignement */
     color: inherit; /* Hérite de la couleur du parent (par exemple, du texte de la carte) */
