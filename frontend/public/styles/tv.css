@@ -3,16 +3,19 @@
 body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 /* Style de la zone d'affichage de la TV */
 .tv-display {
+    flex: 1; /* Ensure the tv-display takes up available space */
     display: flex;
     justify-content: center;
-    padding: 20px;
+    padding: 5px;
     background-color: #f4f4f4;
     color: #101010;
-    height: 54.5vw;
     flex-wrap: wrap; /* Permet de gérer l'affichage sur plusieurs lignes si nécessaire */
 }
 
@@ -49,17 +52,17 @@ body {
 
 /* Style pour la section des cartes à l'intérieur des colonnes */
 .cards {
-    margin: 20px;
+    margin: 10px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 5px;
     width: 100%; /* Assure que les cartes prennent toute la largeur de la colonne */
     margin-bottom: 20px;
-    margin-top: 10px;
+    margin-top: 5px;
 }
 
 .card {
-    background: #ffffff;
+    background: #fff;
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
@@ -78,16 +81,17 @@ body {
 /* Style des textes des cartes */
 .card p {
     font-size: 0.8rem;
-    line-height: 1.5;
+    line-height: 1.2;
     color: #000000;
     white-space: pre-line; /* Conserve les retours à la ligne */
 }
 
 .card-title {
     font-weight: bold;
+    margin-top: 0; /* Ajustez la marge supérieure pour aligner le titre */
     text-decoration: underline;
     text-align: left;  /* Justification à gauche */
-    margin-bottom: 10px;
+    margin-bottom: 0px;
     width: 100%;  /* Ajouter cette ligne pour forcer la largeur du titre */
     font-size: 1rem;
 }
@@ -102,7 +106,7 @@ body {
     font-size: 0.7rem;
     color: #555;
     text-align: right;
-    margin-top: 10px;
+    margin-top: 5px;
 }
 
 .card-footer {
@@ -374,4 +378,12 @@ textarea {
 /* Style pour les cartes de la société "Thomas" */
 .card.company-thomas {
     background-color: #d6d6d6; /* Gris */
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f4f4f4;
+    border-top: 1px solid #ddd;
 }
