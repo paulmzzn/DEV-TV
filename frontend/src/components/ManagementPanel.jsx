@@ -3,6 +3,7 @@ import 'regenerator-runtime/runtime';
 import React, { useEffect, useState, useCallback } from 'react';
 import '../styles/management.css';
 import '../styles/tv.css';
+import avatarImage from '../images/Avatar.png';
 
 const ManagementPanel = () => {
   const [columns, setColumns] = useState([]);
@@ -35,11 +36,16 @@ const ManagementPanel = () => {
   const [cardToDelete, setCardToDelete] = useState({ columnId: null, cardId: null });
   const [loginName, setLoginName] = useState('');
   const [nameSubmitted, setNameSubmitted] = useState(false);
-  
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
+
+  const toggleAccountMenu = () => {
+    setShowAccountMenu(!showAccountMenu);
+  };
+
   const fetchColumns = useCallback(async () => {
     try {
       const token = localStorage.getItem('jwt_token');
-      const response = await fetch('http://87.106.130.160/api/columns', {
+      const response = await fetch('http://localhost:3000/api/columns', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -53,20 +59,7 @@ const ManagementPanel = () => {
     }
   }, []);
 
-  const checkClientIp = useCallback(async () => {
-    try {
-      const response = await fetch('http://87.106.130.160/api/check-ip');
-      const data = await response.json();
-      if (data.showNamePopup && !nameSubmitted) {
-        setShowNamePopup(true);
-      }
-    } catch (error) {
-      console.error('Erreur lors de la vérification de l\'IP:', error);
-    }
-  }, [nameSubmitted]);
-
   useEffect(() => {
-    checkClientIp();
     fetchColumns();
 
     const intervalId = setInterval(() => {
@@ -76,7 +69,7 @@ const ManagementPanel = () => {
     }, 20000); 
 
     return () => clearInterval(intervalId);
-  }, [showCardForm, showEditCardForm, fetchColumns, checkClientIp]);
+  }, [showCardForm, showEditCardForm, fetchColumns]);
 
   useEffect(() => {
     columns.forEach(column => {
@@ -93,7 +86,7 @@ const ManagementPanel = () => {
     const title = prompt('Enter column title:');
     if (!title) return;
 
-    const res = await fetch('http://87.106.130.160/api/columns', {
+    const res = await fetch('http://localhost:3000/api/columns', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -120,7 +113,7 @@ const ManagementPanel = () => {
     const id = columnToDelete;
     setShowDeleteColumnPopup(false);
     try {
-      await fetch(`http://87.106.130.160/api/columns/${id}`, {
+      await fetch(`http://localhost:3000/api/columns/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
@@ -137,7 +130,7 @@ const ManagementPanel = () => {
     const { columnId, cardId } = cardToDelete;
     setShowDeleteCardPopup(false);
     try {
-      await fetch(`http://87.106.130.160/api/cards/${cardId}`, {
+      await fetch(`http://localhost:3000/api/cards/${cardId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
@@ -175,10 +168,11 @@ const ManagementPanel = () => {
       author: authorName,
       status: cardData.status || 'À faire',
       societe: cardData.societe,
+      assigne: cardData.assigne, 
     };
   
     try {
-      const res = await fetch('http://87.106.130.160/api/cards', {
+      const res = await fetch('http://localhost:3000/api/cards', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -258,7 +252,7 @@ const ManagementPanel = () => {
 
   const updateCardColumn = async (cardId, newColumnId, cardToMove) => {
     try {
-      const response = await fetch(`http://87.106.130.160/api/cards/${cardId}`, {
+      const response = await fetch(`http://localhost:3000/api/cards/${cardId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -295,7 +289,7 @@ const ManagementPanel = () => {
     }
 
     try {
-      const res = await fetch(`http://87.106.130.160/api/cards/${editCardData.cardId}`, {
+      const res = await fetch(`http://localhost:3000/api/cards/${editCardData.cardId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -309,6 +303,7 @@ const ManagementPanel = () => {
           author: editCardData.author,
           status: editCardData.status,
           societe: editCardData.societe,
+          assigne: editCardData.assigne,
         }),
       });
 
@@ -352,7 +347,7 @@ const ManagementPanel = () => {
 
   const handleLoginSubmit = async (username, password) => {
     try {
-      const response = await fetch('http://87.106.130.160/api/login', {
+      const response = await fetch('http://localhost:3000/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -382,6 +377,16 @@ const ManagementPanel = () => {
   
   return (
     <div className="management-panel">
+      <div className="avatar-container">
+        <img src={avatarImage} alt="Avatar" className="avatar" onClick={toggleAccountMenu} />
+        {showAccountMenu && (
+          <div className="account-menu">
+            <p>Profile</p>
+            <p>Settings</p>
+            <p>Logout</p>
+          </div>
+        )}
+      </div>
       <button onClick={addColumn}>Add Column</button>
       <div className="columns">
         {columns.map((column) => (
@@ -429,7 +434,10 @@ const ManagementPanel = () => {
                     <p className={`card-status ${card.status === 'À faire' ? 'available' : 'unavailable'}`}>
                       <b>{card.status || '???'}</b>
                     </p>
-                    <p className="card-author">Auteur : {card.author || '???'}</p>
+                    {card.assigne !== 'Personne' && (
+                      <p className="card-author">Assigné à : <b>{card.assigne}</b></p>
+                    )}
+                    <p className="card-author">Auteur : <b>{card.author || '???'}</b></p>
                   <div className="card-buttons">
                     <button className="btnupdatecard" onClick={() => openEditCardForm(card)}>
                       Update Card
@@ -491,6 +499,21 @@ const ManagementPanel = () => {
               />
             </label>
             <label>
+              Assigné à :
+              <select
+                value={cardData.assigne}
+                onChange={(e) => setCardData({ ...cardData, assigne: e.target.value })}
+              >
+                <option value="Personne">Personne</option>
+                <option value="Aubin">Aubin</option>
+                <option value="Stéphane">Stéphane</option>
+                <option value="Léo">Léo</option>
+                <option value="Thomas">Thomas</option>
+                <option value="François">François</option>
+                <option value="Paul">Paul</option>
+              </select>
+            </label>
+            <label>
               Société :
               <select
                 value={cardData.societe}
@@ -550,6 +573,21 @@ const ManagementPanel = () => {
                 value={editCardData.status}
                 onChange={(e) => setEditCardData({ ...editCardData, status: e.target.value })}
               />
+            </label>
+            <label>
+            Assigné à :
+              <select
+                value={editCardData.assigne}
+                onChange={(e) => setEditCardData({ ...editCardData, assigne: e.target.value })}
+              >
+                <option value="Personne">Personne</option>
+                <option value="Aubin">Aubin</option>
+                <option value="Stéphane">Stéphane</option>
+                <option value="Léo">Léo</option>
+                <option value="Thomas">Thomas</option>
+                <option value="François">François</option>
+                <option value="Paul">Paul</option>
+              </select>
             </label>
             <label>
               Société :

@@ -256,6 +256,39 @@ body {
     color: red;
   }
 
+  .avatar-container {
+    position: absolute;
+    top: 4vw;
+    right: 30px;
+  }
+
+  .avatar {
+    width: 4vw;
+    cursor: pointer;
+  }
+
+  .account-menu {
+    position: absolute;
+    top: 5vw; /* Adjust based on the height of the avatar */
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    z-index: 1000; /* Ensure it is above other content */
+    width: 200px; /* Adjust width as needed */
+  }
+  
+  .account-menu p {
+    margin: 0;
+    padding: 5px 0;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .account-menu p:last-child {
+    border-bottom: none;
+  }
 
   /* Media queries pour responsive */
 /* Media queries pour responsive */
@@ -324,4 +357,11 @@ body {
 /* Empêcher le zoom sur les champs de formulaire */
 input, textarea {
   font-size: 16px; /* Taille de police suffisante pour empêcher le zoom sur les petits écrans */
+}
+
+select {
+  font-size: 16px; /* Taille de police suffisante pour empêcher le zoom sur les petits écrans */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
 }
