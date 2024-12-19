@@ -1,8 +1,10 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import React, { useEffect, useState, useCallback } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper/modules';
+import 'swiper/swiper-bundle.css';
 import '../styles/management.css';
-import '../styles/tv.css';
 import avatarImage from '../images/Avatar.png';
 import jwt_decode from 'jwt-decode';
 
@@ -59,7 +61,7 @@ const ManagementPanel = () => {
   const fetchColumns = useCallback(async () => {
     try {
       const token = localStorage.getItem('jwt_token');
-      const response = await fetch('http://localhost:3000/api/columns', {
+      const response = await fetch('http://192.168.1.64:3000/api/columns', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -86,17 +88,6 @@ const ManagementPanel = () => {
   }, [showCardForm, showEditCardForm, fetchColumns]);
 
   useEffect(() => {
-    columns.forEach(column => {
-      column.cards.forEach(card => {
-        const cardElement = document.getElementById(card._id);
-        if (cardElement && cardElement.classList.contains('expanded')) {
-          cardElement.querySelector('.expand-btn').textContent = 'Réduire';
-        }
-      });
-    });
-  }, [columns]);
-
-  useEffect(() => {
     const token = localStorage.getItem('jwt_token');
     if (token) {
       const decoded = jwt_decode(token);
@@ -121,7 +112,7 @@ const ManagementPanel = () => {
     const title = prompt('Enter column title:');
     if (!title) return;
 
-    const res = await fetch('http://localhost:3000/api/columns', {
+    const res = await fetch('http://192.168.1.64:3000/api/columns', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -148,7 +139,7 @@ const ManagementPanel = () => {
     const id = columnToDelete;
     setShowDeleteColumnPopup(false);
     try {
-      await fetch(`http://localhost:3000/api/columns/${id}`, {
+      await fetch(`http://192.168.1.64:3000/api/columns/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
@@ -165,7 +156,7 @@ const ManagementPanel = () => {
     const { columnId, cardId } = cardToDelete;
     setShowDeleteCardPopup(false);
     try {
-      await fetch(`http://localhost:3000/api/cards/${cardId}`, {
+      await fetch(`http://192.168.1.64:3000/api/cards/${cardId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
@@ -208,7 +199,7 @@ const ManagementPanel = () => {
     };
   
     try {
-      const res = await fetch('http://localhost:3000/api/cards', {
+      const res = await fetch('http://192.168.1.64:3000/api/cards', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -288,7 +279,7 @@ const ManagementPanel = () => {
 
   const updateCardColumn = async (cardId, newColumnId, cardToMove) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/cards/${cardId}`, {
+      const response = await fetch(`http://192.168.1.64:3000/api/cards/${cardId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -325,7 +316,7 @@ const ManagementPanel = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:3000/api/cards/${editCardData.cardId}`, {
+      const res = await fetch(`http://192.168.1.64:3000/api/cards/${editCardData.cardId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -371,20 +362,9 @@ const ManagementPanel = () => {
     }
   };
 
-  const toggleCardExpansion = (cardId) => {
-    const cardElement = document.getElementById(cardId);
-    if (cardElement) {
-      cardElement.classList.toggle('expanded');
-      const expandBtn = cardElement.querySelector('.expand-btn');
-      if (expandBtn) {
-        expandBtn.textContent = cardElement.classList.contains('expanded') ? 'Réduire' : 'Développer';
-      }
-    }
-  };
-
   const handleLoginSubmit = async (username, password) => {
     try {
-      const response = await fetch('http://localhost:3000/api/login', {
+      const response = await fetch('http://192.168.1.64:3000/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -450,6 +430,8 @@ const ManagementPanel = () => {
     }));
   };
 
+  const isMobile = window.innerWidth <= 768;
+
   return (
     <div className="management-panel">
       <div className="avatar-container">
@@ -490,7 +472,7 @@ const ManagementPanel = () => {
               x
             </button>
             <div className="cards">
-              <button
+              <button className='btnAddCard'
                 onClick={() => {
                   setCurrentColumnId(column._id);
                   setShowCardForm(true);
@@ -498,43 +480,88 @@ const ManagementPanel = () => {
               >
                 Add Card +
               </button>
-              {column.cards.map((card) => (
-                <div
-                  key={card._id}
-                  id={card._id}
-                  className="card"
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, card._id)}
-                  style={{ backgroundColor: sortOption === 'normal' ? '#eee' : priorityColors[card.priority] }}
-                >
-                  <h4 className="card-title">{card.title}</h4>
-                  <button className="expand-btn" onClick={() => toggleCardExpansion(card._id)}>
-                    {document.getElementById(card._id) && document.getElementById(card._id).classList.contains('expanded') ? 'Réduire' : 'Développer'}
-                  </button>
-                  <p className="card-content">{card.content}</p>
-                  {card.link && (
-                    <a href={card.link} target="_blank" rel="noopener noreferrer" className="card-link">
-                      {card.link}
-                    </a>
-                  )}
-                  <div className="card-footer"></div>
-                    <p className={`card-status ${card.status === 'À faire' ? 'available' : 'unavailable'}`}>
-                      <b>{card.status || '???'}</b>
-                    </p>
-                    {card.assigne !== 'Personne' && (
-                      <p className="card-author">Assigné à : <b>{card.assigne}</b></p>
+              {isMobile ? (
+                <>
+                  <Swiper
+                    spaceBetween={20}
+                    slidesPerView={1}
+                    pagination={{ clickable: true }}
+                    modules={[Pagination]}
+                    style={{ width: '100%' }}
+                  >
+                    {column.cards.map((card) => (
+                      <SwiperSlide key={card._id}>
+                        <div
+                          id={card._id}
+                          className="card"
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, card._id)}
+                          style={{ backgroundColor: sortOption === 'normal' ? '#eee' : priorityColors[card.priority] }}
+                        >
+                          <h4 className="card-title">{card.title}</h4>
+                          <p className="card-content">{card.content}</p>
+                          {card.link && (
+                            <a href={card.link} target="_blank" rel="noopener noreferrer" className="card-link">
+                              {card.link}
+                            </a>
+                          )}
+                          <div className="card-footer"></div>
+                            <p className={`card-status ${card.status === 'À faire' ? 'available' : 'unavailable'}`}>
+                              <b>{card.status || '???'}</b>
+                            </p>
+                            {card.assigne !== 'Personne' && (
+                              <p className="card-author">Assigné à : <b>{card.assigne}</b></p>
+                            )}
+                            <p className="card-author">Auteur : <b>{card.author || '???'}</b></p>
+                          <div className="card-buttons">
+                            <button className="btnupdatecard" onClick={() => openEditCardForm(card)}>
+                              Update Card
+                            </button>
+                            <button className="btndeletecard" onClick={() => confirmDeleteCard(column._id, card._id)}>
+                              Delete Card
+                            </button>
+                          </div>
+                        </div>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </>
+              ) : (
+                column.cards.map((card) => (
+                  <div
+                    key={card._id}
+                    id={card._id}
+                    className="card"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, card._id)}
+                    style={{ backgroundColor: sortOption === 'normal' ? '#eee' : priorityColors[card.priority] }}
+                  >
+                    <h4 className="card-title">{card.title}</h4>
+                    <p className="card-content">{card.content}</p>
+                    {card.link && (
+                      <a href={card.link} target="_blank" rel="noopener noreferrer" className="card-link">
+                        {card.link}
+                      </a>
                     )}
-                    <p className="card-author">Auteur : <b>{card.author || '???'}</b></p>
-                  <div className="card-buttons">
-                    <button className="btnupdatecard" onClick={() => openEditCardForm(card)}>
-                      Update Card
-                    </button>
-                    <button className="btndeletecard" onClick={() => confirmDeleteCard(column._id, card._id)}>
-                      Delete Card
-                    </button>
+                    <div className="card-footer"></div>
+                      <p className={`card-status ${card.status === 'À faire' ? 'available' : 'unavailable'}`}>
+                        <b>{card.status || '???'}</b>
+                      </p>
+                      {card.assigne !== 'Personne' && (
+                        <p className="card-author">Assigné à : <b>{card.assigne}</b></p>
+                      )}
+                      <p className="card-author">Auteur : <b>{card.author || '???'}</b></p>
+                    <div className="card-buttons">
+                      <button className="btnupdatecard" onClick={() => openEditCardForm(card)}>
+                        Update Card
+                      </button>
+                      <button className="btndeletecard" onClick={() => confirmDeleteCard(column._id, card._id)}>
+                        Delete Card
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         ))}

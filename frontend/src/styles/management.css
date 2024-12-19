@@ -4,6 +4,7 @@
 body {
   font-family: 'Poppins', sans-serif;
   background-color: #f4f4f4;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 .management-panel {
@@ -208,7 +209,7 @@ body {
     display: flex;
     justify-content: space-between; /* Espacement égal entre les boutons */
     width: 100%; /* Prendre toute la largeur de la carte */
-    margin-top: 10px; /* Espacement au-dessus des boutons */
+    margin-top: 0px; /* Réduire encore l'espacement au-dessus des boutons */
     gap: 20%; /* Espacement entre les boutons */
   }
   
@@ -301,68 +302,84 @@ body {
   }
 
   /* Media queries pour responsive */
-/* Media queries pour responsive */
-/* Media queries pour responsive */
-/* Media queries pour responsive */
-/* Media queries pour responsive */
 @media (max-width: 768px) {
   .columns {
     flex-direction: column;
+    padding: 0%;
     align-items: center; /* Aligner les colonnes verticalement sur les petits écrans */
     width: 100%; /* Assurer que les colonnes prennent toute la largeur disponible */
     margin: 0; /* Enlever les marges */
   }
 
   .column {
-    width: 95%; /* Colonne plus large sur petits écrans pour prendre plus d'espace disponible */
-    margin-bottom: 20px;
+    justify-items: center; /* Centrer les cartes horizontalement */
+    width: 90%; /* Assurer que les colonnes prennent toute la largeur disponible */
+
   }
 
   .card {
+    height: auto; /* Assurer que les cartes aient la même hauteur */
+    box-sizing: border-box; /* Inclure le padding et la bordure dans la hauteur et la largeur */
+    width: 100%; /* Mettre la largeur des cartes à 100% */
+    min-height: 400px;
+    transform: none; /* Enlever l'élévation au survol */
+    box-shadow: none; /* Enlever l'ombre au survol */
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .card-title {
-    font-size: 1rem;
+    justify-content: space-between; /* Assurer que les boutons soient en bas */
   }
 
   .card-content,
   .card-footer,
-  .card-buttons,
   .card-link {
-    display: none; /* Masquer initialement le contenu, les boutons et le lien des cartes */
+    display: block; /* Afficher le contenu, les boutons et le lien des cartes */
+    margin: auto 0; /* Centrer verticalement le contenu */
   }
 
-  .card.expanded .card-content,
-  .card.expanded .card-footer,
-  .card.expanded .card-buttons,
-  .card.expanded .card-link {
-    display: block; /* Afficher le contenu, les boutons et le lien des cartes lorsqu'elles sont développées */
+  .card:hover {
+    transform: none !important; /* Enlever l'élévation au survol */
+    box-shadow: none !important; /* Enlever l'ombre au survol */
   }
 
-  .expand-btn {
-    display: block;
-    margin-top: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
+  .btnAddCard {
+    margin: 0%;
+    width: 100%; /* Assurer que le bouton "Add Card" prend toute la largeur disponible */
   }
 
-  .expand-btn:hover {
-    background-color: #0056b3;
+  .card-buttons {
+    display: flex;
+    justify-content: space-between; /* Espacement égal entre les boutons */
+    width: 100%; /* Prendre toute la largeur de la carte */
+    margin-top: 0px; /* Réduire l'espacement au-dessus des boutons */
+    gap: 10px; /* Espacement entre les boutons */
+    align-self: flex-start; /* Placer les boutons en haut de la carte */
+  }
+
+  .card-buttons .btnupdatecard,
+  .card-buttons .btndeletecard {
+    height: 120%; /* Augmenter la hauteur des boutons de 20% */
+    margin-bottom: 15px; /* Ajouter 15px de marge en bas des boutons */
+  }
+
+  .card-buttons .btnupdatecard {
+    order: 1; /* Placer le bouton "Update Card" à gauche */
+  }
+
+  .card-buttons .btndeletecard {
+    order: 2; /* Placer le bouton "Delete Card" à droite */
+  }
+
+  .avatar {
+    width: 10vw; /* Augmenter la taille de l'image de compte */
   }
 }
 
 @media (min-width: 769px) {
   .expand-btn {
     display: none; /* Cacher le bouton "Développer" sur les grands écrans */
-  }
 }
+
+} /* Closing bracket added here */
 
 /* Empêcher le zoom sur les champs de formulaire */
 input, textarea {
@@ -433,3 +450,67 @@ select {
 .card[data-priority="5"] {
   background-color: #F1948A;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
+/* Style de la zone d'affichage de la TV */
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+.tv-display {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    background-color: #f4f4f4;
+    color: #101010;
+    min-height: 100vh; /* Assurer que l'affichage prenne toute la hauteur */
+    flex-wrap: wrap; /* Permet de gérer l'affichage sur plusieurs lignes si nécessaire */
+  }
+  
+  /* Style pour chaque colonne */
+  .column {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    min-width: 100px; /* Limite la largeur minimale des colonnes */
+    flex: 1 1 200px; /* Les colonnes se redimensionnent dynamiquement */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrer les cartes à l'intérieur de la colonne */
+  }
+  
+  /* Style pour la section des cartes à l'intérieur des colonnes */
+.cards {
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%; /* Assure que les cartes prennent toute la largeur de la colonne */
+    margin-bottom: 20px;
+}
+
+
+  
+  .card:hover {
+    transform: translateY(-5px); /* Légère élévation au survol */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Ombre plus forte au survol */
+  }
+  
+  /* Style pour les titres des colonnes */
+  .column h2 {
+    font-size: 1.5vw;
+    color: #000000;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-family: Poppins, sans-serif;
+  }
+  
+  /* Style des textes des cartes */
+  .card p {
+    font-size: 0.7rem;
+    line-height: 1.5;
+    color: #000000;
+    white-space: pre-line; /* Conserve les retours à la ligne */
+  }
+
