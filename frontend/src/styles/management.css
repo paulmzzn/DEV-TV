@@ -365,3 +365,22 @@ select {
   border-radius: 4px;
   width: 100%;
 }
+
+.btnLogout {
+  background-color: #dc3545; /* Rouge */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px; /* Increase padding for a wider button */
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Transition douce */
+  margin-top: 10px; /* Espace au-dessus du bouton */
+  display: block; /* Make the button a block element */
+  width: 100%; /* Make the button take the full width */
+  text-align: center; /* Center the text */
+}
+
+.btnLogout:hover {
+  background-color: #c82333; /* Rouge foncé pour le hover */
+}

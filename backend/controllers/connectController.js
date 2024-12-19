@@ -18,7 +18,7 @@ const login = async (req, res) => {
     if (!valid) {
         return res.status(401).json({ message: 'Identifiants incorrects' });
     }
-    const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '30d' }); // Crée un JWT
+    const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1d' }); // Crée un JWT
     res.json({ token });
 }
 

@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import '../styles/management.css';
 import '../styles/tv.css';
 import avatarImage from '../images/Avatar.png';
+import jwt_decode from 'jwt-decode';
 
 const ManagementPanel = () => {
   const [columns, setColumns] = useState([]);
@@ -37,6 +38,8 @@ const ManagementPanel = () => {
   const [loginName, setLoginName] = useState('');
   const [nameSubmitted, setNameSubmitted] = useState(false);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const [decodedToken, setDecodedToken] = useState(null);
+  const [view, setView] = useState('all');
 
   const toggleAccountMenu = () => {
     setShowAccountMenu(!showAccountMenu);
@@ -81,6 +84,14 @@ const ManagementPanel = () => {
       });
     });
   }, [columns]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('jwt_token');
+    if (token) {
+      const decoded = jwt_decode(token);
+      setDecodedToken(decoded);
+    }
+  }, []);
 
   const addColumn = async () => {
     const title = prompt('Enter column title:');
@@ -361,6 +372,8 @@ const ManagementPanel = () => {
   
       const data = await response.json();
       localStorage.setItem('jwt_token', data.token);
+      const decoded = jwt_decode(data.token);
+      setDecodedToken(decoded);
       setShowLoginPopup(false);
       setLoginName(username); // Store the login name
       fetchColumns();
@@ -374,22 +387,53 @@ const ManagementPanel = () => {
     setNameSubmitted(true);
     setShowNamePopup(false);
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('jwt_token');
+    setDecodedToken(null);
+    setShowAccountMenu(false);
+    setColumns([]);
+  };
   
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
+  const filterTasks = (columns) => {
+    if (view === 'assigned') {
+      return columns.map(column => ({
+        ...column,
+        cards: column.cards.filter(card => card.assigne.toLowerCase() === decodedToken.username.toLowerCase())
+      }));
+    } else if (view === 'inProgress') {
+      return columns.map(column => ({
+        ...column,
+        cards: column.cards.filter(card => card.status.toLowerCase() === `en cours : ${decodedToken.username.toLowerCase()}`)
+      }));
+    }
+    return columns;
+  };
+
   return (
     <div className="management-panel">
       <div className="avatar-container">
         <img src={avatarImage} alt="Avatar" className="avatar" onClick={toggleAccountMenu} />
         {showAccountMenu && (
           <div className="account-menu">
-            <p>Profile</p>
+            {decodedToken && <p>Profile :<b> {capitalizeFirstLetter(decodedToken.username)}</b></p>}
             <p>Settings</p>
-            <p>Logout</p>
+            <select onChange={(e) => setView(e.target.value)} value={view}>
+              <option value="all">All Tasks</option>
+              <option value="assigned">Assigned to Me</option>
+              <option value="inProgress">In Progress by Me</option>
+            </select>
+            <button className="btnLogout" onClick={handleLogout}>Logout</button>
           </div>
         )}
       </div>
       <button onClick={addColumn}>Add Column</button>
       <div className="columns">
-        {columns.map((column) => (
+        {filterTasks(columns).map((column) => (
           <div
             key={column._id}
             className="column"
