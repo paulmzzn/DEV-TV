@@ -4,14 +4,14 @@ const Card = require('../models/Card');
 // Créer une nouvelle carte et l'ajouter à la colonne spécifiée
 const createCard = async (req, res) => {
   try {
-    const { title, content, columnId, link, author, status, societe, assigne, priorite } = req.body;
+    const { title, content, columnId, link, author, status, societe, assigne, priority } = req.body;
 
     if (!title || !columnId) {
       return res.status(400).json({ error: 'title and columnId are required' });
     }
 
     // Créer la carte
-    const card = new Card({ title, content, columnId, link, author, status, societe, assigne, priorite });
+    const card = new Card({ title, content, columnId, link, author, status, societe, assigne, priority });
     await card.save();
 
     // Ajouter l'ID de la carte à la colonne correspondante
@@ -33,7 +33,7 @@ const createCard = async (req, res) => {
 const updateCard = async (req, res) => {
   try {
     const { id } = req.params;
-    const { content, title, link, columnId, author, status, societe, assigne, priorite } = req.body;
+    const { content, title, link, columnId, author, status, societe, assigne, priority } = req.body;
 
     const card = await Card.findById(id);
     if (!card) {
@@ -48,7 +48,7 @@ const updateCard = async (req, res) => {
     if (status !== undefined) card.status = status;
     if (societe !== undefined) card.societe = societe;
     if (assigne !== undefined) card.assigne = assigne;
-    if (priorite !== undefined) card.priorite = priorite;
+    if (priority !== undefined) card.priority = priority;
 
 
     await card.save();

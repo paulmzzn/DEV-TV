@@ -37,7 +37,6 @@ const ManagementPage = () => {
         </div>
       </h1>
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-        <button onClick={() => window.location.href='/tv.html'}>Go to TV Display</button>
       </div>
       <ManagementPanel />
     </div>

@@ -20,6 +20,7 @@ const ManagementPanel = () => {
     author: '',
     status: '',
     societe: '',
+    priority: 3,
   });
   const [showEditCardForm, setShowEditCardForm] = useState(false); 
   const [editCardData, setEditCardData] = useState({
@@ -30,6 +31,7 @@ const ManagementPanel = () => {
     cardId: '',
     status: '',
     societe: '',
+    priority: 3,
   });
   const [showDeleteColumnPopup, setShowDeleteColumnPopup] = useState(false);
   const [showDeleteCardPopup, setShowDeleteCardPopup] = useState(false);
@@ -40,6 +42,15 @@ const ManagementPanel = () => {
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [decodedToken, setDecodedToken] = useState(null);
   const [view, setView] = useState('all');
+  const [sortOption, setSortOption] = useState('normal');
+
+  const priorityColors = {
+    1: '#D4EDDA',
+    2: '#A9DFBF',
+    3: '#F9E79F',
+    4: '#F5CBA7',
+    5: '#F1948A'
+  };
 
   const toggleAccountMenu = () => {
     setShowAccountMenu(!showAccountMenu);
@@ -92,6 +103,19 @@ const ManagementPanel = () => {
       setDecodedToken(decoded);
     }
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showAccountMenu && !event.target.closest('.account-menu') && !event.target.closest('.avatar')) {
+        setShowAccountMenu(false);
+      }
+    };
+  
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showAccountMenu]);
 
   const addColumn = async () => {
     const title = prompt('Enter column title:');
@@ -180,6 +204,7 @@ const ManagementPanel = () => {
       status: cardData.status || 'À faire',
       societe: cardData.societe,
       assigne: cardData.assigne, 
+      priority: cardData.priority,
     };
   
     try {
@@ -206,7 +231,7 @@ const ManagementPanel = () => {
   
       setColumns(updatedColumns);
       setShowCardForm(false);
-      setCardData({ title: '', content: '', link: '', author: '', status: '', societe: '' });
+      setCardData({ title: '', content: '', link: '', author: '', status: '', societe: '', priority: 3 });
     } catch (error) {
       console.error('Erreur lors de l\'ajout de la carte:', error);
     }
@@ -315,6 +340,7 @@ const ManagementPanel = () => {
           status: editCardData.status,
           societe: editCardData.societe,
           assigne: editCardData.assigne,
+          priority: editCardData.priority,
         }),
       });
 
@@ -399,19 +425,29 @@ const ManagementPanel = () => {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
   };
 
-  const filterTasks = (columns) => {
-    if (view === 'assigned') {
-      return columns.map(column => ({
-        ...column,
-        cards: column.cards.filter(card => card.assigne.toLowerCase() === decodedToken.username.toLowerCase())
-      }));
-    } else if (view === 'inProgress') {
-      return columns.map(column => ({
-        ...column,
-        cards: column.cards.filter(card => card.status.toLowerCase() === `en cours : ${decodedToken.username.toLowerCase()}`)
-      }));
+  const sortCards = (cards) => {
+    if (sortOption === 'priorityAsc') {
+      return [...cards].sort((a, b) => a.priority - b.priority);
+    } else if (sortOption === 'priorityDesc') {
+      return [...cards].sort((a, b) => b.priority - a.priority);
     }
-    return columns;
+    return cards;
+  };
+
+  const filterTasks = (columns) => {
+    return columns.map(column => ({
+      ...column,
+      cards: sortCards(column.cards.filter(card => {
+        if (view === 'assigned') {
+          return card.assigne.toLowerCase() === decodedToken.username.toLowerCase();
+        } else if (view === 'inProgress') {
+          return card.status.toLowerCase() === `en cours : ${decodedToken.username.toLowerCase()}`;
+        } else if (view === 'createdByMe') {
+          return card.author.toLowerCase() === decodedToken.username.toLowerCase();
+        }
+        return true;
+      }))
+    }));
   };
 
   return (
@@ -420,17 +456,23 @@ const ManagementPanel = () => {
         <img src={avatarImage} alt="Avatar" className="avatar" onClick={toggleAccountMenu} />
         {showAccountMenu && (
           <div className="account-menu">
-            {decodedToken && <p>Profile :<b> {capitalizeFirstLetter(decodedToken.username)}</b></p>}
-            <p>Settings</p>
+            {decodedToken && <p><b> {capitalizeFirstLetter(decodedToken.username)}</b></p>}
             <select onChange={(e) => setView(e.target.value)} value={view}>
-              <option value="all">All Tasks</option>
-              <option value="assigned">Assigned to Me</option>
-              <option value="inProgress">In Progress by Me</option>
+              <option value="all">Toutes les taches</option>
+              <option value="assigned">Assigné à moi</option>
+              <option value="inProgress">En cours par moi</option>
+              <option value="createdByMe">Créé par moi</option>
+            </select>
+            <select onChange={(e) => setSortOption(e.target.value)} value={sortOption}>
+              <option value="normal">Normal</option>
+              <option value="priorityDesc">Priorité + </option>
+              <option value="priorityAsc">Priorité - </option>
             </select>
             <button className="btnLogout" onClick={handleLogout}>Logout</button>
           </div>
         )}
       </div>
+      <button className="btnGoToTV" onClick={() => window.location.href = '/tv.html'}>Go to TV Display</button>
       <button onClick={addColumn}>Add Column</button>
       <div className="columns">
         {filterTasks(columns).map((column) => (
@@ -463,6 +505,7 @@ const ManagementPanel = () => {
                   className="card"
                   draggable
                   onDragStart={(e) => handleDragStart(e, card._id)}
+                  style={{ backgroundColor: sortOption === 'normal' ? '#eee' : priorityColors[card.priority] }}
                 >
                   <h4 className="card-title">{card.title}</h4>
                   <button className="expand-btn" onClick={() => toggleCardExpansion(card._id)}>
@@ -567,6 +610,19 @@ const ManagementPanel = () => {
                 <option value="Thomas">Thomas</option>
               </select>
             </label>
+            <label>
+              Priorité :
+              <select
+                value={cardData.priority}
+                onChange={(e) => setCardData({ ...cardData, priority: e.target.value })}
+              >
+                <option value="1">Très faible priorité</option>
+                <option value="2">Faible priorité</option>
+                <option value="3">Priorité moyenne</option>
+                <option value="4">Haute priorité</option>
+                <option value="5">Très haute priorité</option>
+              </select>
+            </label>
             <div className="form-actions">
               <button className="btncancel" onClick={() => setShowCardForm(false)}>Annuler</button>
               <button onClick={addCard}>Ajouter</button>
@@ -641,6 +697,19 @@ const ManagementPanel = () => {
               >
                 <option value="François">François</option>
                 <option value="Thomas">Thomas</option>
+              </select>
+            </label>
+            <label>
+              Priorité :
+              <select
+                value={editCardData.priority}
+                onChange={(e) => setEditCardData({ ...editCardData, priority: e.target.value })}
+              >
+                <option value="1">Très faible priorité</option>
+                <option value="2">Faible priorité</option>
+                <option value="3">Priorité moyenne</option>
+                <option value="4">Haute priorité</option>
+                <option value="5">Très haute priorité</option>
               </select>
             </label>
             <div className="form-actions">

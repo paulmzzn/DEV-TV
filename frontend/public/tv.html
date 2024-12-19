@@ -181,8 +181,6 @@
               deleteCardPopup.style.display = 'flex';
             });
 
-            
-
             const cardElement = document.createElement('div');
             cardElement.className = 'card';
             cardElement.innerHTML = `
@@ -197,7 +195,15 @@
               </div>
             `;
 
-            cardElement.querySelector('.btn-status').addEventListener('click', () => {
+            if (card.link) {
+              cardElement.style.cursor = 'pointer';
+              cardElement.addEventListener('click', () => {
+                window.open(card.link, '_blank');
+              });
+            }
+
+            cardElement.querySelector('.btn-status').addEventListener('click', (e) => {
+              e.stopPropagation();
               console.log(`Status button clicked for card ${card._id}...`);
               if (card.status === 'À faire') {
                 console.log('Card is available. Showing popup...');

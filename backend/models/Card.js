@@ -10,7 +10,7 @@ const cardSchema = new Schema({
   status : { type: String, required: false, default: 'À faire' }, // Ajoutez un champ statut
   assigne : { type: String, required: false, default: 'Personne'}, // Ajoutez un champ assigné
   societe : { type: String, required: false, default: 'François'}, // Ajoutez un champ societe
-  priorite : { type: String, required: false, default: 'Très faible priorité'}, // Ajoutez un champ priorite
+  priority : { type: String, required: false, default: 'Très faible priorité'}, // Ajoutez un champ priorite
 });
 
 const Card = mongoose.model('Card', cardSchema);

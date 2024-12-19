@@ -290,6 +290,16 @@ body {
     border-bottom: none;
   }
 
+  .account-menu select {
+    margin-top: 10px; /* Espace au-dessus du menu déroulant */
+    height: 40px; /* Augmenter la hauteur du menu déroulant */
+    width: 100%; /* Prendre toute la largeur disponible */
+    padding: 5px; /* Ajouter du padding pour un meilleur aspect */
+    border: 1px solid #ddd; /* Bordure légère */
+    border-radius: 5px; /* Bordure arrondie */
+    font-size: 14px; /* Taille de police */
+  }
+
   /* Media queries pour responsive */
 /* Media queries pour responsive */
 /* Media queries pour responsive */
@@ -383,4 +393,43 @@ select {
 
 .btnLogout:hover {
   background-color: #c82333; /* Rouge foncé pour le hover */
+}
+
+.btnGoToTV {
+  background-color: #007bff; /* Bleu */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px; /* Increase padding for a wider button */
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Transition douce */
+  margin-top: 10px; /* Espace au-dessus du bouton */
+  display: block; /* Make the button a block element */
+  width: 100%; /* Make the button take the full width */
+  text-align: center; /* Center the text */
+}
+
+.btnGoToTV:hover {
+  background-color: #0056b3; /* Bleu foncé pour le hover */
+}
+
+.card[data-priority="1"] {
+  background-color: #D4EDDA; /* Correct color for Très faible priorité */
+}
+
+.card[data-priority="2"] {
+  background-color: #A9DFBF;
+}
+
+.card[data-priority="3"] {
+  background-color: #F9E79F;
+}
+
+.card[data-priority="4"] {
+  background-color: #F5CBA7;
+}
+
+.card[data-priority="5"] {
+  background-color: #F1948A;
 }
