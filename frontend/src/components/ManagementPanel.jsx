@@ -61,6 +61,10 @@ const ManagementPanel = () => {
   const fetchColumns = useCallback(async () => {
     try {
       const token = localStorage.getItem('jwt_token');
+      if (!token) {
+        setShowLoginPopup(true);
+        return;
+      }
       const response = await fetch('http://87.106.130.160/api/columns', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -109,6 +113,11 @@ const ManagementPanel = () => {
   }, [showAccountMenu]);
 
   const addColumn = async () => {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) {
+      setShowLoginPopup(true);
+      return;
+    }
     const title = prompt('Enter column title:');
     if (!title) return;
 
@@ -116,7 +125,7 @@ const ManagementPanel = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({ title, cards: [] }),
     });
@@ -136,13 +145,18 @@ const ManagementPanel = () => {
   };
 
   const deleteColumn = async () => {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) {
+      setShowLoginPopup(true);
+      return;
+    }
     const id = columnToDelete;
     setShowDeleteColumnPopup(false);
     try {
       await fetch(`http://87.106.130.160/api/columns/${id}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+          'Authorization': `Bearer ${token}`
         }
       });
 
@@ -153,13 +167,18 @@ const ManagementPanel = () => {
   };
 
   const deleteCard = async () => {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) {
+      setShowLoginPopup(true);
+      return;
+    }
     const { columnId, cardId } = cardToDelete;
     setShowDeleteCardPopup(false);
     try {
       await fetch(`http://87.106.130.160/api/cards/${cardId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+          'Authorization': `Bearer ${token}`
         }
       });
 
@@ -180,6 +199,11 @@ const ManagementPanel = () => {
   };
 
   const addCard = async () => {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) {
+      setShowLoginPopup(true);
+      return;
+    }
     if (!cardData.title) {
       alert('Veuillez remplir le titre.');
       return;
@@ -203,7 +227,7 @@ const ManagementPanel = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(newCardData),
       });
@@ -278,12 +302,17 @@ const ManagementPanel = () => {
   };
 
   const updateCardColumn = async (cardId, newColumnId, cardToMove) => {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) {
+      setShowLoginPopup(true);
+      return;
+    }
     try {
       const response = await fetch(`http://87.106.130.160/api/cards/${cardId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           title: cardToMove.title,
@@ -310,7 +339,12 @@ const ManagementPanel = () => {
   };
 
   const updateCard = async () => {
-    if (!editCardData.title ||!editCardData.columnId) {
+    const token = localStorage.getItem('jwt_token');
+    if (!token) {
+      setShowLoginPopup(true);
+      return;
+    }
+    if (!editCardData.title || !editCardData.columnId) {
       alert('Veuillez remplir tous les champs.');
       return;
     }
@@ -320,7 +354,7 @@ const ManagementPanel = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           title: editCardData.title,
@@ -450,7 +484,11 @@ const ManagementPanel = () => {
               <option value="priorityDesc">Priorité + </option>
               <option value="priorityAsc">Priorité - </option>
             </select>
-            <button className="btnLogout" onClick={handleLogout}>Logout</button>
+            {decodedToken ? (
+              <button className="btnLogout" onClick={handleLogout}>Logout</button>
+            ) : (
+              <button className="btnLogin" onClick={() => setShowLoginPopup(true)}>Login</button>
+            )}
           </div>
         )}
       </div>

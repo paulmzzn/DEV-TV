@@ -412,6 +412,28 @@ select {
   background-color: #c82333; /* Rouge foncé pour le hover */
 }
 
+.btnLogin {
+  background-color: #4CAF50; /* Rouge */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px; /* Increase padding for a wider button */
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Transition douce */
+  margin-top: 10px; /* Espace au-dessus du bouton */
+  display: block; /* Make the button a block element */
+  width: 100%; /* Make the button take the full width */
+  text-align: center; /* Center the text */
+}
+
+.btnLogin:hover {
+  background-color: darkgreen; /* Rouge foncé pour le hover */
+}
+
+
+
+
 .btnGoToTV {
   background-color: #007bff; /* Bleu */
   color: white;
@@ -426,6 +448,8 @@ select {
   width: 100%; /* Make the button take the full width */
   text-align: center; /* Center the text */
 }
+
+
 
 .btnGoToTV:hover {
   background-color: #0056b3; /* Bleu foncé pour le hover */
