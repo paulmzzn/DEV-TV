@@ -61,7 +61,7 @@ const ManagementPanel = () => {
   const fetchColumns = useCallback(async () => {
     try {
       const token = localStorage.getItem('jwt_token');
-      const response = await fetch('http://192.168.1.64:3000/api/columns', {
+      const response = await fetch('http://87.106.130.160/api/columns', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -112,7 +112,7 @@ const ManagementPanel = () => {
     const title = prompt('Enter column title:');
     if (!title) return;
 
-    const res = await fetch('http://192.168.1.64:3000/api/columns', {
+    const res = await fetch('http://87.106.130.160/api/columns', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -139,7 +139,7 @@ const ManagementPanel = () => {
     const id = columnToDelete;
     setShowDeleteColumnPopup(false);
     try {
-      await fetch(`http://192.168.1.64:3000/api/columns/${id}`, {
+      await fetch(`http://87.106.130.160/api/columns/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
@@ -156,7 +156,7 @@ const ManagementPanel = () => {
     const { columnId, cardId } = cardToDelete;
     setShowDeleteCardPopup(false);
     try {
-      await fetch(`http://192.168.1.64:3000/api/cards/${cardId}`, {
+      await fetch(`http://87.106.130.160/api/cards/${cardId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
@@ -199,7 +199,7 @@ const ManagementPanel = () => {
     };
   
     try {
-      const res = await fetch('http://192.168.1.64:3000/api/cards', {
+      const res = await fetch('http://87.106.130.160/api/cards', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -279,7 +279,7 @@ const ManagementPanel = () => {
 
   const updateCardColumn = async (cardId, newColumnId, cardToMove) => {
     try {
-      const response = await fetch(`http://192.168.1.64:3000/api/cards/${cardId}`, {
+      const response = await fetch(`http://87.106.130.160/api/cards/${cardId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -310,13 +310,13 @@ const ManagementPanel = () => {
   };
 
   const updateCard = async () => {
-    if (!editCardData.title || !editCardData.content || !editCardData.columnId) {
+    if (!editCardData.title ||!editCardData.columnId) {
       alert('Veuillez remplir tous les champs.');
       return;
     }
 
     try {
-      const res = await fetch(`http://192.168.1.64:3000/api/cards/${editCardData.cardId}`, {
+      const res = await fetch(`http://87.106.130.160/api/cards/${editCardData.cardId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -364,7 +364,7 @@ const ManagementPanel = () => {
 
   const handleLoginSubmit = async (username, password) => {
     try {
-      const response = await fetch('http://192.168.1.64:3000/api/login', {
+      const response = await fetch('http://87.106.130.160/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -604,15 +604,6 @@ const ManagementPanel = () => {
               />
             </label>
             <label>
-              Auteur :
-              <input
-                type="text"
-                value={cardData.author}
-                onChange={(e) => setCardData({ ...cardData, author: e.target.value })}
-                placeholder='Auteur de la carte'
-              />
-            </label>
-            <label>
               Assigné à :
               <select
                 value={cardData.assigne}
@@ -683,14 +674,6 @@ const ManagementPanel = () => {
                 type="url"
                 value={editCardData.link || ''}
                 onChange={(e) => setEditCardData({ ...editCardData, link: e.target.value })}
-              />
-            </label>
-            <label>
-              Auteur :
-              <input
-                type="text"
-                value={editCardData.author}
-                onChange={(e) => setEditCardData({ ...editCardData, author: e.target.value })}
               />
             </label>
             <label>
