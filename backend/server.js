@@ -53,7 +53,6 @@ const authMiddleware = (req, res, next) => {
 const columnsRoutes = require('./routes/columns');
 const cardsRoutes = require('./routes/cards');
 const loginRoutes = require('./routes/user');
-const userRoutes = require('./routes/user'); // Add this line
 
 
 // Applique le middleware d'auth pour toutes les routes API
@@ -79,8 +78,7 @@ app.get('/api/test', (req, res) => {
 app.use('/api' , loginRoutes);
 app.use('/api/columns', authMiddleware, columnsRoutes);
 app.use('/api/cards', authMiddleware, cardsRoutes);
-// Remove the user-info route
-// app.use('/api/users', authMiddleware, userRoutes); // Add this line
+
 
 // Connexion à la base de données
 db.connect();

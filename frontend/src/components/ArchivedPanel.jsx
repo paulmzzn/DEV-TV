@@ -26,7 +26,7 @@ const ArchivedPanel = () => {
       if (!token) {
         return;
       }
-      const response = await fetch('http://http://87.106.130.160/api/columns', {
+      const response = await fetch('http://87.106.130.160/api/columns', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -75,7 +75,7 @@ const ArchivedPanel = () => {
     if (!cardToDelete) return;
     try {
       const token = localStorage.getItem('jwt_token');
-      await fetch(`http://http://87.106.130.160/api/cards/${cardToDelete._id}`, {
+      await fetch(`http://87.106.130.160/api/cards/${cardToDelete._id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
