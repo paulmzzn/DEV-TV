@@ -3,13 +3,16 @@ import 'regenerator-runtime/runtime';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import ManagementPage from './pages/ManagementPage';
+import ArchivedPage from './pages/ArchivedPage';
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/tv.html" />} />
+        <Route path="/tv" element={<Navigate to="/tv.html" />} />
+        <Route path="/" element={<ManagementPage />} />
         <Route path="/manage" element={<ManagementPage />} />
+        <Route path="/archive" element={<ArchivedPage />} />
       </Routes>
     </Router>
   );

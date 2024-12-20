@@ -83,7 +83,8 @@ body {
   font-family: Poppins, sans-serif;
   font-weight: 500;
   font-size: 0.7em;
-
+  height: auto; /* Adjust height to fit more cards */
+  min-height: 100px; /* Adjust minimum height */
 }
 
 .card-title {
@@ -185,6 +186,7 @@ body {
 
   .btncancel {
     background-color: #dc3545; /* Rouge */
+    width: 100%; /* Largeur de 48% pour les boutons */
   }
 
   .btncancel:hover {
@@ -204,6 +206,7 @@ body {
   .btnupdatecard:hover {
     background-color: #2980b9;
   }
+
 
   .card-buttons {
     display: flex;
@@ -537,4 +540,65 @@ body {
     color: #000000;
     white-space: pre-line; /* Conserve les retours à la ligne */
   }
+
+.btnDeleteCard {
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+}
+
+.search-bar {
+  width: calc(100% - 20px); /* Adjust width to fit within the screen */
+  padding: 10px;
+  margin: 10px auto; /* Center the search bar */
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* Space between buttons */
+  margin-bottom: 10px;
+}
+
+.btnGoToTV, .btnGoToManagement {
+  flex: 1; /* Ensure both buttons have the same size */
+  background-color: #007bff; /* Blue */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  height: 40px; /* Ensure both buttons have the same height */
+  display: flex;
+  align-items: center; /* Center the text vertically */
+  justify-content: center; /* Center the text horizontally */
+  margin-top: 0; /* Ensure both buttons have the same top margin */
+}
+
+.btnGoToTV:hover {
+  background-color: #0056b3; /* Dark blue for hover */
+}
+
+.btnGoToManagement {
+  background-color: #28a745; /* Green */
+}
+
+.btnGoToManagement:hover {
+  background-color: #218838; /* Dark green for hover */
+}
 

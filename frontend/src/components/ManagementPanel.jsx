@@ -65,7 +65,7 @@ const ManagementPanel = () => {
         setShowLoginPopup(true);
         return;
       }
-      const response = await fetch('http://87.106.130.160/api/columns', {
+      const response = await fetch('http://192.168.1.64:3000/api/columns', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -96,6 +96,11 @@ const ManagementPanel = () => {
     if (token) {
       const decoded = jwt_decode(token);
       setDecodedToken(decoded);
+      setLoginName(decoded.username); // Set loginName from decoded token
+      setCardData((prevCardData) => ({
+        ...prevCardData,
+        author: decoded.username // Set author field in cardData
+      }));
     }
   }, []);
 
@@ -121,7 +126,7 @@ const ManagementPanel = () => {
     const title = prompt('Enter column title:');
     if (!title) return;
 
-    const res = await fetch('http://87.106.130.160/api/columns', {
+    const res = await fetch('http://192.168.1.64:3000/api/columns', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -139,7 +144,7 @@ const ManagementPanel = () => {
     setShowDeleteColumnPopup(true);
   };
 
-  const confirmDeleteCard = (columnId, cardId) => {
+  const confirmArchiveCard = (columnId, cardId) => {
     setCardToDelete({ columnId, cardId });
     setShowDeleteCardPopup(true);
   };
@@ -153,7 +158,7 @@ const ManagementPanel = () => {
     const id = columnToDelete;
     setShowDeleteColumnPopup(false);
     try {
-      await fetch(`http://87.106.130.160/api/columns/${id}`, {
+      await fetch(`http://192.168.1.64:3000/api/columns/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -166,7 +171,7 @@ const ManagementPanel = () => {
     }
   };
 
-  const deleteCard = async () => {
+  const archiveCard = async () => {
     const token = localStorage.getItem('jwt_token');
     if (!token) {
       setShowLoginPopup(true);
@@ -175,11 +180,13 @@ const ManagementPanel = () => {
     const { columnId, cardId } = cardToDelete;
     setShowDeleteCardPopup(false);
     try {
-      await fetch(`http://87.106.130.160/api/cards/${cardId}`, {
-        method: 'DELETE',
+      await fetch(`http://192.168.1.64:3000/api/cards/${cardId}`, {
+        method: 'PUT',
         headers: {
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
-        }
+        },
+        body: JSON.stringify({ archived: true }),
       });
 
       const updatedColumns = columns.map((column) => {
@@ -194,7 +201,7 @@ const ManagementPanel = () => {
 
       setColumns(updatedColumns);
     } catch (error) {
-      console.error('Erreur lors de la suppression de la carte:', error);
+      console.error('Erreur lors de l\'archivage de la carte:', error);
     }
   };
 
@@ -223,7 +230,7 @@ const ManagementPanel = () => {
     };
   
     try {
-      const res = await fetch('http://87.106.130.160/api/cards', {
+      const res = await fetch('http://192.168.1.64:3000/api/cards', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -246,7 +253,7 @@ const ManagementPanel = () => {
   
       setColumns(updatedColumns);
       setShowCardForm(false);
-      setCardData({ title: '', content: '', link: '', author: '', status: '', societe: '', priority: 3 });
+      setCardData({ title: '', content: '', link: '', author: authorName, status: '', societe: '', priority: 3 });
     } catch (error) {
       console.error('Erreur lors de l\'ajout de la carte:', error);
     }
@@ -308,7 +315,7 @@ const ManagementPanel = () => {
       return;
     }
     try {
-      const response = await fetch(`http://87.106.130.160/api/cards/${cardId}`, {
+      const response = await fetch(`http://192.168.1.64:3000/api/cards/${cardId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -350,7 +357,7 @@ const ManagementPanel = () => {
     }
 
     try {
-      const res = await fetch(`http://87.106.130.160/api/cards/${editCardData.cardId}`, {
+      const res = await fetch(`http://192.168.1.64:3000/api/cards/${editCardData.cardId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -361,7 +368,7 @@ const ManagementPanel = () => {
           content: editCardData.content,
           link: editCardData.link,
           columnId: editCardData.columnId,
-          author: editCardData.author,
+          author: loginName, // Set author field to loginName
           status: editCardData.status,
           societe: editCardData.societe,
           assigne: editCardData.assigne,
@@ -398,7 +405,7 @@ const ManagementPanel = () => {
 
   const handleLoginSubmit = async (username, password) => {
     try {
-      const response = await fetch('http://87.106.130.160/api/login', {
+      const response = await fetch('http://192.168.1.64:3000/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -416,6 +423,10 @@ const ManagementPanel = () => {
       setDecodedToken(decoded);
       setShowLoginPopup(false);
       setLoginName(username); // Store the login name
+      setCardData((prevCardData) => ({
+        ...prevCardData,
+        author: username // Set author field in cardData
+      }));
       fetchColumns();
     } catch (error) {
       console.error('Erreur lors de la connexion:', error);
@@ -452,6 +463,7 @@ const ManagementPanel = () => {
     return columns.map(column => ({
       ...column,
       cards: sortCards(column.cards.filter(card => {
+        if (card.archived) return false;
         if (view === 'assigned') {
           return card.assigne.toLowerCase() === decodedToken.username.toLowerCase();
         } else if (view === 'inProgress') {
@@ -492,7 +504,10 @@ const ManagementPanel = () => {
           </div>
         )}
       </div>
-      <button className="btnGoToTV" onClick={() => window.location.href = '/tv.html'}>Go to TV Display</button>
+      <div className="button-container">
+        <button className="btnGoToTV" onClick={() => window.location.href = '/tv.html'}>Go to TV Display</button>
+        <button className="btnGoToManagement" onClick={() => window.location.href = '/archive'}>Go to Archive</button>
+      </div>
       <button onClick={addColumn}>Add Column</button>
       <div className="columns">
         {filterTasks(columns).map((column) => (
@@ -555,8 +570,8 @@ const ManagementPanel = () => {
                             <button className="btnupdatecard" onClick={() => openEditCardForm(card)}>
                               Update Card
                             </button>
-                            <button className="btndeletecard" onClick={() => confirmDeleteCard(column._id, card._id)}>
-                              Delete Card
+                            <button className="btndeletecard" onClick={() => confirmArchiveCard(column._id, card._id)}>
+                              Archive Card
                             </button>
                           </div>
                         </div>
@@ -593,8 +608,8 @@ const ManagementPanel = () => {
                       <button className="btnupdatecard" onClick={() => openEditCardForm(card)}>
                         Update Card
                       </button>
-                      <button className="btndeletecard" onClick={() => confirmDeleteCard(column._id, card._id)}>
-                        Delete Card
+                      <button className="btndeletecard" onClick={() => confirmArchiveCard(column._id, card._id)}>
+                        Archive Card
                       </button>
                     </div>
                   </div>
@@ -818,10 +833,10 @@ const ManagementPanel = () => {
         {showDeleteCardPopup && (
           <div className="popup-overlay">
             <div className="popup-content">
-              <h3>Êtes-vous sûr de vouloir supprimer cette carte ?</h3>
+              <h3>Êtes-vous sûr de vouloir archiver cette carte ?</h3>
               <div className="form-actions">
                 <button className="btncancel" onClick={() => setShowDeleteCardPopup(false)}>Annuler</button>
-                <button className="btndelete" onClick={deleteCard}>Supprimer</button>
+                <button className="btnarchive" onClick={archiveCard}>Archiver</button>
               </div>
             </div>
           </div>

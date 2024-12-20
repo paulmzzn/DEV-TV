@@ -11,6 +11,7 @@ const cardSchema = new Schema({
   assigne : { type: String, required: false, default: 'Personne'}, // Ajoutez un champ assigné
   societe : { type: String, required: false, default: 'François'}, // Ajoutez un champ societe
   priority : { type: String, required: false, default: 'Très faible priorité'}, // Ajoutez un champ priorite
+  archived: { type: Boolean, default: false },
 });
 
 const Card = mongoose.model('Card', cardSchema);
