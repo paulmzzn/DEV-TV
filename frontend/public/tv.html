@@ -70,7 +70,7 @@
 
         if (username && password) {
           try {
-            const response = await fetch('http://192.168.1.64:3000/api/login', {
+            const response = await fetch('http://http://87.106.130.160/api/login', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ username, password })
@@ -98,7 +98,7 @@
       const fetchColumns = async () => {
         try {
           const token = localStorage.getItem('jwt_token');
-          const response = await fetch('http://192.168.1.64:3000/api/columns', {
+          const response = await fetch('http://http://87.106.130.160/api/columns', {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           const columns = await response.json();
@@ -118,7 +118,7 @@
       const deleteCard = async () => {
         try {
           const token = localStorage.getItem('jwt_token');
-          await fetch(`http://192.168.1.64:3000/api/cards/${cardToDelete.cardId}`, {
+          await fetch(`http://http://87.106.130.160/api/cards/${cardToDelete.cardId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
           });
@@ -132,7 +132,7 @@
       const updateCardStatus = async (cardId, newStatus) => {
         try {
           const token = localStorage.getItem('jwt_token');
-          const response = await fetch(`http://192.168.1.64:3000/api/cards/${cardId}`, {
+          const response = await fetch(`http://http://87.106.130.160/api/cards/${cardId}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
