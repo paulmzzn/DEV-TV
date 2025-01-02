@@ -141,6 +141,19 @@ const ArchivedPanel = () => {
     };
   }, [showAccountMenu]);
 
+  const cardStyle = {
+    backgroundColor: '#eee',
+    minHeight: '50px', // Adjust min-height for archived cards
+    maxHeight: '100px', // Set max-height for archived cards
+    overflow: 'hidden' // Hide overflow content
+  };
+
+  const mobileCardStyle = {
+    ...cardStyle,
+    minHeight: '50px', // Increase min-height for mobile carousel
+    maxHeight: '100px' // Increase max-height for mobile carousel
+  };
+
   return (
     <div className="management-panel">
       <div className="avatar-container">
@@ -190,48 +203,49 @@ const ArchivedPanel = () => {
                   modules={[Pagination]}
                   style={{ width: '100%' }}
                 >
-                  {column.cards.map((card, index) => (
-                    <SwiperSlide key={card._id}>
-                      <div
-                        id={card._id}
-                        className="card"
-                        onClick={() => openCardPopup(card)}
-                        style={{ backgroundColor: '#eee', minHeight: '100px' }} // Adjust min-height
-                      >
-                        <h4 className="card-title">{card.title}</h4>
-                        <button className="btnDeleteCard" onClick={(e) => {
-                          e.stopPropagation();
-                          openDeletePopup(card);
-                        }}>x</button>
-                      </div>
+                  {column.cards.reduce((acc, card, index) => {
+                    const pageIndex = Math.floor(index / 5);
+                    if (!acc[pageIndex]) {
+                      acc[pageIndex] = [];
+                    }
+                    acc[pageIndex].push(card);
+                    return acc;
+                  }, []).map((page, pageIndex) => (
+                    <SwiperSlide key={pageIndex}>
+                      {page.map(card => (
+                        <div
+                          key={card._id}
+                          id={card._id}
+                          className="card"
+                          onClick={() => openCardPopup(card)}
+                          style={mobileCardStyle} // Apply mobile card style
+                        >
+                          <h4 className="card-title">{card.title}</h4>
+                          <button className="btnDeleteCard" onClick={(e) => {
+                            e.stopPropagation();
+                            openDeletePopup(card);
+                          }}>x</button>
+                        </div>
+                      ))}
                     </SwiperSlide>
                   ))}
                 </Swiper>
               ) : (
-                <Swiper
-                  spaceBetween={20}
-                  slidesPerView={1}
-                  pagination={{ clickable: true }}
-                  modules={[Pagination]}
-                  style={{ width: '100%' }}
-                >
-                  {column.cards.map((card, index) => (
-                    <SwiperSlide key={card._id}>
-                      <div
-                        id={card._id}
-                        className="card"
-                        onClick={() => openCardPopup(card)}
-                        style={{ backgroundColor: '#eee', minHeight: '100px' }} // Adjust min-height
-                      >
-                        <h4 className="card-title">{card.title}</h4>
-                        <button className="btnDeleteCard" onClick={(e) => {
-                          e.stopPropagation();
-                          openDeletePopup(card);
-                        }}>x</button>
-                      </div>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+                column.cards.map((card, index) => (
+                  <div
+                    key={card._id}
+                    id={card._id}
+                    className="card"
+                    onClick={() => openCardPopup(card)}
+                    style={cardStyle} // Apply card style
+                  >
+                    <h4 className="card-title">{card.title}</h4>
+                    <button className="btnDeleteCard" onClick={(e) => {
+                      e.stopPropagation();
+                      openDeletePopup(card);
+                    }}>x</button>
+                  </div>
+                ))
               )}
             </div>
           </div>
@@ -250,7 +264,7 @@ const ArchivedPanel = () => {
             <p><b>Priorité:</b> {selectedCard.priority}</p>
             <p><b>Link:</b> <a href={selectedCard.link} target="_blank" rel="noopener noreferrer">{selectedCard.link}</a></p>
             <div className="form-actions">
-              <button className="btncancel" onClick={closeCardPopup}>Fermer</button>
+              <button className="btncancel full-width" onClick={closeCardPopup}>Fermer</button>
             </div>
           </div>
         </div>

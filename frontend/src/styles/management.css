@@ -128,10 +128,7 @@ body {
     cursor: pointer;
     transition: background-color 0.3s ease; /* Transition douce */
   }
-  
-  button:hover {
-    background-color: #218838; /* Vert foncé pour le hover */
-  }
+
   
   /* Améliorations supplémentaires */
   button:focus {
@@ -174,6 +171,34 @@ body {
     margin-top: 10px;
   }
   
+  .form-actions .full-width {
+    width: 100%;
+    text-align: center;
+  }
+
+  .form-actions .large-button {
+    width: 48%;
+    height: 50px;
+    font-size: 16px;
+    margin: 1 1%;
+  }
+
+  .btn-add {
+    background-color: #28a745; /* Green */
+  }
+  
+  .btn-add:hover {
+    background-color: #218838; /* Dark green for hover */
+  }
+  
+  .btn-update {
+    background-color: #28a745; /* Blue */
+  }
+  
+  .btn-update:hover {
+    background-color: #218838; /* Dark blue for hover */
+  }
+
   input,
   textarea {
     width: 95%;
@@ -186,7 +211,6 @@ body {
 
   .btncancel {
     background-color: #dc3545; /* Rouge */
-    width: 100%; /* Largeur de 48% pour les boutons */
   }
 
   .btncancel:hover {
@@ -317,7 +341,10 @@ body {
   .column {
     justify-items: center; /* Centrer les cartes horizontalement */
     width: 90%; /* Assurer que les colonnes prennent toute la largeur disponible */
+  }
 
+  .column.last-column {
+    margin-bottom: 80px; /* Ajouter de l'espace en bas de la dernière colonne */
   }
 
   .card {
@@ -345,8 +372,7 @@ body {
   }
 
   .btnAddCard {
-    margin: 0%;
-    width: 100%; /* Assurer que le bouton "Add Card" prend toute la largeur disponible */
+    display: none; /* Cacher le bouton "Add Card" dans les colonnes sur mobile */
   }
 
   .card-buttons {
@@ -360,8 +386,10 @@ body {
 
   .card-buttons .btnupdatecard,
   .card-buttons .btndeletecard {
-    height: 120%; /* Augmenter la hauteur des boutons de 20% */
-    margin-bottom: 15px; /* Ajouter 15px de marge en bas des boutons */
+    height: 30px; /* Ajuster la hauteur des boutons */
+    width: 48%; /* Prendre la moitié de la largeur de la carte */
+    font-size: 16px; /* Augmenter la taille de la police */
+    margin-bottom: 10px;
   }
 
   .card-buttons .btnupdatecard {
@@ -375,6 +403,12 @@ body {
   .avatar {
     width: 10vw; /* Augmenter la taille de l'image de compte */
   }
+
+  .form-actions .full-width {
+    width: 100%;
+    text-align: center;
+  }
+
 }
 
 @media (min-width: 769px) {
@@ -570,7 +604,6 @@ body {
   display: flex;
   justify-content: center;
   gap: 10px; /* Space between buttons */
-  margin-bottom: 10px;
 }
 
 .btnGoToTV, .btnGoToManagement {
@@ -602,3 +635,77 @@ body {
   background-color: #218838; /* Dark green for hover */
 }
 
+.btnAddCardSticky {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  width: calc(100% - 40px);
+  margin: 0 auto;
+  padding: 15px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  /* je veux ajouter une bordure noir */
+  border: 2px solid white;
+
+}
+
+.btnAddCardSticky:hover {
+  background-color: #218838;
+}
+
+.column-select-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.column-select {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 25px;
+  margin-bottom: 10px;
+}
+
+.column-select-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  width: 150px;
+  height: 150px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  text-align: center;
+}
+
+.column-select-title {
+  display: block;
+  width: 100%;
+  word-wrap: break-word;
+  color: #000000;
+}
+
+.column-select-button:hover {
+  background-color: #007bff;
+}
+
+.btn-status-red {
+  background-color: red;
+  color: white;
+}
+
+.btn-status-red:hover {
+  background-color: darkred;
+}

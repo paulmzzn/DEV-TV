@@ -45,6 +45,7 @@ const ManagementPanel = () => {
   const [decodedToken, setDecodedToken] = useState(null);
   const [view, setView] = useState('all');
   const [sortOption, setSortOption] = useState('normal');
+  const [showColumnSelectPopup, setShowColumnSelectPopup] = useState(false);
 
   const priorityColors = {
     1: '#D4EDDA',
@@ -478,6 +479,35 @@ const ManagementPanel = () => {
 
   const isMobile = window.innerWidth <= 768;
 
+  const handleAddCardClick = () => {
+    if (isMobile) {
+      setShowColumnSelectPopup(true);
+    } else {
+      setShowCardForm(true);
+    }
+  };
+
+  const handleColumnSelect = (columnId) => {
+    setCurrentColumnId(columnId);
+    setShowColumnSelectPopup(false);
+    setShowCardForm(true);
+  };
+
+  const getColumnButtonStyle = (title) => {
+    switch (title) {
+      case 'Prepa Commande':
+        return { backgroundColor: 'rgb(179, 229, 252)' };
+      case 'Stock':
+        return { backgroundColor: 'rgb(200, 230, 201)' };
+      case 'Inter':
+        return { backgroundColor: 'rgb(255, 249, 196)' };
+      case 'Rappel':
+        return { backgroundColor: 'rgb(251, 135, 135)' };
+      default:
+        return {};
+    }
+  };
+
   return (
     <div className="management-panel">
       <div className="avatar-container">
@@ -510,10 +540,10 @@ const ManagementPanel = () => {
       </div>
       <button onClick={addColumn}>Add Column</button>
       <div className="columns">
-        {filterTasks(columns).map((column) => (
+        {filterTasks(columns).map((column, index) => (
           <div
             key={column._id}
-            className="column"
+            className={`column ${isMobile && index === columns.length - 1 ? 'last-column' : ''}`}
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, column._id)}
           >
@@ -525,14 +555,16 @@ const ManagementPanel = () => {
               x
             </button>
             <div className="cards">
-              <button className='btnAddCard'
-                onClick={() => {
-                  setCurrentColumnId(column._id);
-                  setShowCardForm(true);
-                }}
-              >
-                Add Card +
-              </button>
+              {!isMobile && (
+                <button className='btnAddCard'
+                  onClick={() => {
+                    setCurrentColumnId(column._id);
+                    setShowCardForm(true);
+                  }}
+                >
+                  Add Card +
+                </button>
+              )}
               {isMobile ? (
                 <>
                   <Swiper
@@ -566,7 +598,7 @@ const ManagementPanel = () => {
                               <p className="card-author">Assigné à : <b>{card.assigne}</b></p>
                             )}
                             <p className="card-author">Auteur : <b>{card.author || '???'}</b></p>
-                          <div className="card-buttons">
+                          <div className="card-buttons mobile-buttons">
                             <button className="btnupdatecard" onClick={() => openEditCardForm(card)}>
                               Update Card
                             </button>
@@ -619,6 +651,40 @@ const ManagementPanel = () => {
           </div>
         ))}
       </div>
+
+      {isMobile && (
+        <button
+          className="btnAddCardSticky"
+          onClick={handleAddCardClick}
+        >
+          Add Card +
+        </button>
+      )}
+
+      {showColumnSelectPopup && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h3>Select Column</h3>
+            <div className="column-select-wrapper">
+              <div className="column-select">
+                {columns.map((column) => (
+                  <button
+                    key={column._id}
+                    className="column-select-button"
+                    onClick={() => handleColumnSelect(column._id)}
+                    style={getColumnButtonStyle(column.title)}
+                  >
+                    <span className="column-select-title"><b>{column.title}</b></span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="form-actions">
+              <button className="btncancel full-width" onClick={() => setShowColumnSelectPopup(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showCardForm && (
         <div className="popup-overlay">
@@ -695,8 +761,8 @@ const ManagementPanel = () => {
               </select>
             </label>
             <div className="form-actions">
-              <button className="btncancel" onClick={() => setShowCardForm(false)}>Annuler</button>
-              <button onClick={addCard}>Ajouter</button>
+              <button className="btncancel large-button" onClick={() => setShowCardForm(false)}>Annuler</button>
+              <button className="btn-add large-button" onClick={addCard}>Ajouter</button>
             </div>
           </div>
         </div>
@@ -776,8 +842,8 @@ const ManagementPanel = () => {
               </select>
             </label>
             <div className="form-actions">
-              <button className="btncancel" onClick={() => setShowEditCardForm(false)}>Annuler</button>
-              <button onClick={updateCard}>Mettre à Jour</button>
+              <button className="btncancel large-button" onClick={() => setShowEditCardForm(false)}>Annuler</button>
+              <button className="btn-update large-button" onClick={updateCard}>Mettre à Jour</button>
             </div>
           </div>
         </div>
@@ -790,7 +856,7 @@ const ManagementPanel = () => {
             <input type="text" id="login-username" placeholder="Nom d'utilisateur" />
             <input type="password" id="login-password" placeholder="Mot de passe" />
             <div className="form-actions">
-              <button className='btn-status-red' onClick={() => setShowLoginPopup(false)}>Annuler</button>
+              <button className='btn-status-red full-width' onClick={() => setShowLoginPopup(false)}>Annuler</button>
               <button className='btn-status-green' onClick={() => {
                 const username = document.getElementById('login-username').value.trim();
                 const password = document.getElementById('login-password').value.trim();
@@ -812,7 +878,7 @@ const ManagementPanel = () => {
               placeholder="Votre nom"
             />
             <div className="form-actions">
-              <button onClick={handleNameSubmit}>OK</button>
+              <button className="full-width" onClick={handleNameSubmit}>OK</button>
             </div>
           </div>
         </div>
@@ -823,8 +889,8 @@ const ManagementPanel = () => {
             <div className="popup-content">
               <h3>Êtes-vous sûr de vouloir supprimer cette colonne ?</h3>
               <div className="form-actions">
-                <button className="btncancel" onClick={() => setShowDeleteColumnPopup(false)}>Annuler</button>
-                <button className="btndelete" onClick={deleteColumn}>Supprimer</button>
+                <button className="btncancel large-button" onClick={() => setShowDeleteColumnPopup(false)}>Annuler</button>
+                <button className="btndelete large-button" onClick={deleteColumn}>Supprimer</button>
               </div>
             </div>
           </div>
@@ -835,8 +901,8 @@ const ManagementPanel = () => {
             <div className="popup-content">
               <h3>Êtes-vous sûr de vouloir archiver cette carte ?</h3>
               <div className="form-actions">
-                <button className="btncancel" onClick={() => setShowDeleteCardPopup(false)}>Annuler</button>
-                <button className="btnarchive" onClick={archiveCard}>Archiver</button>
+                <button className="btncancel large-button" onClick={() => setShowDeleteCardPopup(false)}>Annuler</button>
+                <button className="btnarchive large-button" onClick={archiveCard}>Archiver</button>
               </div>
             </div>
           </div>
