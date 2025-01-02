@@ -753,3 +753,26 @@ body {
   background-color: #45a049; /* Darker green for hover */
 }
 
+.font-size-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.font-size-controls button {
+  background-color: #007bff; /* Blue */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  flex: 1; /* Ensure buttons have equal width */
+  margin: 0 5px; /* Add space between buttons */
+}
+
+.font-size-controls button:hover {
+  background-color: #0056b3; /* Dark blue for hover */
+}
+

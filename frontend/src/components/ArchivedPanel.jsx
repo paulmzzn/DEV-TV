@@ -85,6 +85,13 @@ const ArchivedPanel = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const savedFontSize = localStorage.getItem('cardFontSize');
+    if (savedFontSize) {
+      setCardFontSize(parseFloat(savedFontSize));
+    }
+  }, []);
+
   const openCardPopup = (card) => {
     setSelectedCard(card);
     setShowCardPopup(true);
@@ -237,7 +244,25 @@ const ArchivedPanel = () => {
   };
 
   const increaseCardFontSize = () => {
-    setCardFontSize(prevSize => prevSize + 0.1); // Increase font size by 0.1
+    setCardFontSize(prevSize => {
+      const newSize = prevSize + 0.1;
+      localStorage.setItem('cardFontSize', newSize);
+      return newSize;
+    });
+  };
+
+  const resetCardFontSize = () => {
+    const defaultSize = 0.7;
+    setCardFontSize(defaultSize);
+    localStorage.setItem('cardFontSize', defaultSize);
+  };
+
+  const decreaseCardFontSize = () => {
+    setCardFontSize(prevSize => {
+      const newSize = Math.max(prevSize - 0.1, 0.5);
+      localStorage.setItem('cardFontSize', newSize);
+      return newSize;
+    });
   };
 
   return (
@@ -263,7 +288,11 @@ const ArchivedPanel = () => {
               <option value="Paul">Assigné à Paul</option>
             </select>
             <button className="btnGoToStatistics" onClick={() => window.location.href = '/statistics'}>Statistiques</button>
-            <button onClick={increaseCardFontSize}>Augmenter la taille des cartes</button> {/* Add button to increase font size */}
+            <div className="font-size-controls">
+              <button onClick={decreaseCardFontSize}>-</button> {/* Add button to decrease font size */}
+              <button onClick={resetCardFontSize}>Reset</button> {/* Add button to reset font size */}
+              <button onClick={increaseCardFontSize}>+</button> {/* Add button to increase font size */}
+            </div>
             {decodedToken ? (
               <button className="btnLogout" onClick={handleLogout}>Logout</button>
             ) : (
