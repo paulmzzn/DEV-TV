@@ -734,3 +734,22 @@ body {
   background-color: #e7f3ff;
 }
 
+.btnGoToStatistics {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px; /* Increase padding for a wider button */
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Smooth transition */
+  margin-top: 10px; /* Space above the button */
+  display: block; /* Make the button a block element */
+  width: 100%; /* Make the button take the full width */
+  text-align: center; /* Center the text */
+}
+
+.btnGoToStatistics:hover {
+  background-color: #45a049; /* Darker green for hover */
+}
+

@@ -19,6 +19,7 @@ const ArchivedPanel = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [cardToDelete, setCardToDelete] = useState(null);
+  const [showLoginPopup, setShowLoginPopup] = useState(false); // Define showLoginPopup state
 
   const fetchColumns = useCallback(async () => {
     try {
@@ -171,6 +172,39 @@ const ArchivedPanel = () => {
     maxHeight: '100px' // Increase max-height for mobile carousel
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('jwt_token');
+    setDecodedToken(null);
+    setShowAccountMenu(false);
+    setColumns([]);
+  };
+
+  const handleLoginSubmit = async (username, password) => {
+    try {
+      const response = await fetch('http://87.106.130.160/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      const data = await response.json();
+      localStorage.setItem('jwt_token', data.token);
+      const decoded = jwt_decode(data.token);
+      setDecodedToken(decoded);
+      setShowLoginPopup(false);
+      fetchColumns();
+    } catch (error) {
+      console.error('Erreur lors de la connexion:', error);
+      alert('Login failed, please try again.');
+    }
+  };
+
   return (
     <div className="management-panel">
       <div className="avatar-container">
@@ -193,6 +227,12 @@ const ArchivedPanel = () => {
               <option value="François">Assigné à François</option>
               <option value="Paul">Assigné à Paul</option>
             </select>
+            <button className="btnGoToStatistics" onClick={() => window.location.href = '/statistics'}>Statistiques</button>
+            {decodedToken ? (
+              <button className="btnLogout" onClick={handleLogout}>Logout</button>
+            ) : (
+              <button className="btnLogin" onClick={() => setShowLoginPopup(true)}>Login</button>
+            )}
           </div>
         )}
       </div>
@@ -294,6 +334,24 @@ const ArchivedPanel = () => {
             <div className="form-actions">
               <button className="btn-status-red" onClick={closeDeletePopup}>Annuler</button>
               <button className="btn-status-green" onClick={deleteCard}>Supprimer</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showLoginPopup && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h3>Connexion</h3>
+            <input type="text" id="login-username" placeholder="Nom d'utilisateur" />
+            <input type="password" id="login-password" placeholder="Mot de passe" />
+            <div className="form-actions">
+              <button className='btn-status-red' onClick={() => setShowLoginPopup(false)}>Annuler</button>
+              <button className='btn-status-green' onClick={() => {
+                const username = document.getElementById('login-username').value.trim();
+                const password = document.getElementById('login-password').value.trim();
+                handleLoginSubmit(username, password);
+              }}>Se connecter</button>
             </div>
           </div>
         </div>

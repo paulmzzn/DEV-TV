@@ -574,6 +574,7 @@ const ManagementPanel = () => {
               <option value="priorityDesc">Priorité + </option>
               <option value="priorityAsc">Priorité - </option>
             </select>
+            <button className="btnGoToStatistics" onClick={() => window.location.href = '/statistics'}>Statistiques</button>
             {decodedToken ? (
               <button className="btnLogout" onClick={handleLogout}>Logout</button>
             ) : (
