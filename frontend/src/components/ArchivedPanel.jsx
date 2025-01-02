@@ -205,6 +205,20 @@ const ArchivedPanel = () => {
     }
   };
 
+  const handleViewChange = (e) => {
+    setView(e.target.value);
+    if (e.target.value !== 'all') {
+      setAssigneeFilter('all'); // Reset the second select
+    }
+  };
+
+  const handleAssigneeFilterChange = (e) => {
+    setAssigneeFilter(e.target.value);
+    if (e.target.value !== 'all') {
+      setView('all'); // Reset the first select
+    }
+  };
+
   return (
     <div className="management-panel">
       <div className="avatar-container">
@@ -212,13 +226,13 @@ const ArchivedPanel = () => {
         {showAccountMenu && (
           <div className="account-menu">
             {decodedToken && <p><b> {capitalizeFirstLetter(decodedToken.username)}</b></p>}
-            <select onChange={(e) => setView(e.target.value)} value={view}>
+            <select onChange={handleViewChange} value={view}>
               <option value="all">Toutes les taches</option>
               <option value="assigned">Assigné à moi</option>
               <option value="inProgress">En cours par moi</option>
               <option value="createdByMe">Créé par moi</option>
             </select>
-            <select onChange={(e) => setAssigneeFilter(e.target.value)} value={assigneeFilter}>
+            <select onChange={handleAssigneeFilterChange} value={assigneeFilter}>
               <option value="all">Tous les assignés</option>
               <option value="Aubin">Assigné à Aubin</option>
               <option value="Stéphane">Assigné à Stéphane</option>
