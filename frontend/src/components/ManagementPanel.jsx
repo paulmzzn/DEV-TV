@@ -891,7 +891,7 @@ const ManagementPanel = () => {
             <input type="text" id="login-username" placeholder="Nom d'utilisateur" />
             <input type="password" id="login-password" placeholder="Mot de passe" />
             <div className="form-actions">
-              <button className='btn-status-red full-width' onClick={() => setShowLoginPopup(false)}>Annuler</button>
+              <button className='btn-status-red' onClick={() => setShowLoginPopup(false)}>Annuler</button>
               <button className='btn-status-green' onClick={() => {
                 const username = document.getElementById('login-username').value.trim();
                 const password = document.getElementById('login-password').value.trim();
