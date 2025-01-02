@@ -35,12 +35,21 @@ const ArchivedPanel = () => {
         throw new Error('Invalid data format');
       }
       setColumns(data);
+      localStorage.setItem('columns', JSON.stringify(data)); // Cache the columns data
     } catch (error) {
       console.error('Erreur lors de la récupération des colonnes:', error);
+      const cachedColumns = localStorage.getItem('columns');
+      if (cachedColumns) {
+        setColumns(JSON.parse(cachedColumns)); // Load cached columns data
+      }
     }
   }, []);
 
   useEffect(() => {
+    const cachedColumns = localStorage.getItem('columns');
+    if (cachedColumns) {
+      setColumns(JSON.parse(cachedColumns)); // Load cached columns data
+    }
     fetchColumns();
   }, [fetchColumns]);
 

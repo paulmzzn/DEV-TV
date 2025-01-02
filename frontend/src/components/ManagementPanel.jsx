@@ -74,9 +74,14 @@ const ManagementPanel = () => {
         throw new Error('Invalid data format');
       }
       setColumns(data);
+      localStorage.setItem('columns', JSON.stringify(data)); // Cache the columns data
     } catch (error) {
       console.error('Erreur lors de la récupération des colonnes:', error);
       setShowLoginPopup(true);
+      const cachedColumns = localStorage.getItem('columns');
+      if (cachedColumns) {
+        setColumns(JSON.parse(cachedColumns)); // Load cached columns data
+      }
     }
   }, []);
 
@@ -494,11 +499,17 @@ const ManagementPanel = () => {
       cards: sortCards(column.cards.filter(card => {
         if (card.archived) return false;
         if (view === 'assigned') {
-          return card.assigne.toLowerCase() === decodedToken.username.toLowerCase();
+          return card.assigne.toLowerCase() === decodedToken.username.toLowerCase() || 
+                 (decodedToken.username.toLowerCase() === 'stef' && card.assigne.toLowerCase() === 'stéphane') ||
+                 (decodedToken.username.toLowerCase() === 'leo gsln' && card.assigne.toLowerCase() === 'léo');
         } else if (view === 'inProgress') {
-          return card.status.toLowerCase() === `en cours : ${decodedToken.username.toLowerCase()}`;
+          return card.status.toLowerCase() === `en cours : ${decodedToken.username.toLowerCase()}` || 
+                 (decodedToken.username.toLowerCase() === 'stef' && card.status.toLowerCase() === 'en cours : stéphane') ||
+                 (decodedToken.username.toLowerCase() === 'leo gsln' && card.status.toLowerCase() === 'en cours : léo');
         } else if (view === 'createdByMe') {
-          return card.author.toLowerCase() === decodedToken.username.toLowerCase();
+          return card.author.toLowerCase() === decodedToken.username.toLowerCase() || 
+                 (decodedToken.username.toLowerCase() === 'stef' && card.author.toLowerCase() === 'stéphane') ||
+                 (decodedToken.username.toLowerCase() === 'leo gsln' && card.author.toLowerCase() === 'léo');
         }
         return true;
       }))
