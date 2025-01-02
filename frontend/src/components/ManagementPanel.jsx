@@ -106,6 +106,17 @@ const ManagementPanel = () => {
   }, []);
 
   useEffect(() => {
+    const savedView = localStorage.getItem('view');
+    const savedSortOption = localStorage.getItem('sortOption');
+    if (savedView) {
+      setView(savedView);
+    }
+    if (savedSortOption) {
+      setSortOption(savedSortOption);
+    }
+  }, []);
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (showAccountMenu && !event.target.closest('.account-menu') && !event.target.closest('.avatar')) {
         setShowAccountMenu(false);
@@ -508,6 +519,26 @@ const ManagementPanel = () => {
     }
   };
 
+  const handlePriorityClick = (priority) => {
+    setCardData({ ...cardData, priority });
+  };
+
+  const handleEditPriorityClick = (priority) => {
+    setEditCardData({ ...editCardData, priority });
+  };
+
+  const handleViewChange = (e) => {
+    const newView = e.target.value;
+    setView(newView);
+    localStorage.setItem('view', newView);
+  };
+
+  const handleSortOptionChange = (e) => {
+    const newSortOption = e.target.value;
+    setSortOption(newSortOption);
+    localStorage.setItem('sortOption', newSortOption);
+  };
+
   return (
     <div className="management-panel">
       <div className="avatar-container">
@@ -515,13 +546,13 @@ const ManagementPanel = () => {
         {showAccountMenu && (
           <div className="account-menu">
             {decodedToken && <p><b> {capitalizeFirstLetter(decodedToken.username)}</b></p>}
-            <select onChange={(e) => setView(e.target.value)} value={view}>
+            <select onChange={handleViewChange} value={view}>
               <option value="all">Toutes les taches</option>
               <option value="assigned">Assigné à moi</option>
               <option value="inProgress">En cours par moi</option>
               <option value="createdByMe">Créé par moi</option>
             </select>
-            <select onChange={(e) => setSortOption(e.target.value)} value={sortOption}>
+            <select onChange={handleSortOptionChange} value={sortOption}>
               <option value="normal">Normal</option>
               <option value="priorityDesc">Priorité + </option>
               <option value="priorityAsc">Priorité - </option>
@@ -749,16 +780,18 @@ const ManagementPanel = () => {
             </label>
             <label>
               Priorité :
-              <select
-                value={cardData.priority}
-                onChange={(e) => setCardData({ ...cardData, priority: e.target.value })}
-              >
-                <option value="1">Très faible priorité</option>
-                <option value="2">Faible priorité</option>
-                <option value="3">Priorité moyenne</option>
-                <option value="4">Haute priorité</option>
-                <option value="5">Très haute priorité</option>
-              </select>
+              <div className="priority-buttons">
+                {[1, 2, 3, 4, 5].map((priority) => (
+                  <button
+                    key={priority}
+                    className={`priority-button ${cardData.priority === priority ? 'selected' : ''}`}
+                    onClick={() => handlePriorityClick(priority)}
+                    style={{ backgroundColor: priorityColors[priority] }}
+                  >
+                    {priority}
+                  </button>
+                ))}
+              </div>
             </label>
             <div className="form-actions">
               <button className="btncancel large-button" onClick={() => setShowCardForm(false)}>Annuler</button>
@@ -830,16 +863,18 @@ const ManagementPanel = () => {
             </label>
             <label>
               Priorité :
-              <select
-                value={editCardData.priority}
-                onChange={(e) => setEditCardData({ ...editCardData, priority: e.target.value })}
-              >
-                <option value="1">Très faible priorité</option>
-                <option value="2">Faible priorité</option>
-                <option value="3">Priorité moyenne</option>
-                <option value="4">Haute priorité</option>
-                <option value="5">Très haute priorité</option>
-              </select>
+              <div className="priority-buttons">
+                {[1, 2, 3, 4, 5].map((priority) => (
+                  <button
+                    key={priority}
+                    className={`priority-button ${editCardData.priority === priority ? 'selected' : ''}`}
+                    onClick={() => handleEditPriorityClick(priority)}
+                    style={{ backgroundColor: priorityColors[priority] }}
+                  >
+                    {priority}
+                  </button>
+                ))}
+              </div>
             </label>
             <div className="form-actions">
               <button className="btncancel large-button" onClick={() => setShowEditCardForm(false)}>Annuler</button>

@@ -426,8 +426,10 @@ input, textarea {
 select {
   font-size: 16px; /* Taille de police suffisante pour empêcher le zoom sur les petits écrans */
   border: 1px solid #ccc;
+  height: 40px;
   border-radius: 4px;
   width: 100%;
+  background-color: #ffffff;
 }
 
 .btnLogout {
@@ -709,3 +711,28 @@ body {
 .btn-status-red:hover {
   background-color: darkred;
 }
+
+.priority-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.priority-button {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f4f4f4;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  width: 100%; /* Ensure buttons take the full width */
+  height: 40px; /* Ensure buttons have the same height as other fields */
+  font-size: 16px; /* Ensure buttons have the same font size as other fields */
+  color: black; /* Ensure text color is black */
+}
+
+.priority-button.selected {
+  border-color: #007bff;
+  background-color: #e7f3ff;
+}
+
