@@ -20,14 +20,15 @@ const ArchivedPage = () => {
         position: 'relative', // Position relative pour le logo
       }}>
         {/* Conteneur du logo aligné à gauche */}
-        <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', left: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', left: '20px' }}>  
           <img 
-            src="https://www.pagesjaunes.fr/media/agc/85/c2/5d/00/00/48/65/0e/8b/14/63cd85c25d000048650e8b14/63cd85c25d000048650e8b15.png?w=1200" 
+            src="https://www.pagesjaunes.fr/media/agc/85/c2/5d/00/00/48/65/0e/8b/14/63cd85c25d000048650e8b14/63cd85c25d000048650e8b15.png" 
             alt="Logo" 
             style={{
               width: '10vw', // Taille de l'image relative à la largeur de la fenêtre
               height: 'auto', // Maintenir le ratio de l'image
               maxWidth: '80px', // Taille maximale de l'image
+              borderRadius: '10px', // Arrondir les bords de l'image
             }}
           />
         </div>

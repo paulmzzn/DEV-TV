@@ -22,20 +22,27 @@ const App = () => {
     }
   }, [isPWA]);
 
+  useEffect(() => {
+    const loader = document.getElementById('loader');
+    if (loader) {
+      loader.style.display = 'none';
+    }
+  }, []);
+
+  if (loading && isPWA) {
+    return <Loader loading={loading} />;
+  }
+
   return (
-    <>
-      {loading && isPWA ? <Loader loading={loading} /> : (
-        <Router>
-          <Routes>
-            <Route path="/tv" element={<Navigate to="/tv.html" />} />
-            <Route path="/" element={<ManagementPage />} />
-            <Route path="/manage" element={<ManagementPage />} />
-            <Route path="/archive" element={<ArchivedPage />} />
-            <Route path="/statistics" element={<StatisticsPage />} />
-          </Routes>
-        </Router>
-      )}
-    </>
+    <Router>
+      <Routes>
+        <Route path="/tv" element={<Navigate to="/tv.html" />} />
+        <Route path="/" element={<ManagementPage />} />
+        <Route path="/manage" element={<ManagementPage />} />
+        <Route path="/archive" element={<ArchivedPage />} />
+        <Route path="/statistics" element={<StatisticsPage />} />
+      </Routes>
+    </Router>
   );
 };
 

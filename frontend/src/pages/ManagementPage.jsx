@@ -28,6 +28,7 @@ const ManagementPage = () => {
               width: '10vw', // Taille de l'image relative à la largeur de la fenêtre
               height: 'auto', // Maintenir le ratio de l'image
               maxWidth: '80px', // Taille maximale de l'image
+              borderRadius: '10px', // Arrondir les bords de l'image
             }}
           />
         </div>

@@ -20,6 +20,7 @@ const ArchivedPanel = () => {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [cardToDelete, setCardToDelete] = useState(null);
   const [showLoginPopup, setShowLoginPopup] = useState(false); // Define showLoginPopup state
+  const [cardFontSize, setCardFontSize] = useState(0.7); // Add state for card font size
 
   const fetchColumns = useCallback(async () => {
     try {
@@ -71,6 +72,12 @@ const ArchivedPanel = () => {
     metaNoTranslate.name = 'google';
     metaNoTranslate.content = 'notranslate';
     document.head.appendChild(metaNoTranslate);
+
+    // Hide loader after initial load
+    const loader = document.getElementById('loader');
+    if (loader) {
+      loader.style.display = 'none';
+    }
 
     return () => {
       document.head.removeChild(metaViewport);
@@ -172,7 +179,8 @@ const ArchivedPanel = () => {
     backgroundColor: '#eee',
     minHeight: '50px', // Adjust min-height for archived cards
     maxHeight: '100px', // Set max-height for archived cards
-    overflow: 'hidden' // Hide overflow content
+    overflow: 'hidden', // Hide overflow content
+    fontSize: `${cardFontSize}rem` // Apply card font size
   };
 
   const mobileCardStyle = {
@@ -228,6 +236,10 @@ const ArchivedPanel = () => {
     }
   };
 
+  const increaseCardFontSize = () => {
+    setCardFontSize(prevSize => prevSize + 0.1); // Increase font size by 0.1
+  };
+
   return (
     <div className="management-panel">
       <div className="avatar-container">
@@ -251,6 +263,7 @@ const ArchivedPanel = () => {
               <option value="Paul">Assigné à Paul</option>
             </select>
             <button className="btnGoToStatistics" onClick={() => window.location.href = '/statistics'}>Statistiques</button>
+            <button onClick={increaseCardFontSize}>Augmenter la taille des cartes</button> {/* Add button to increase font size */}
             {decodedToken ? (
               <button className="btnLogout" onClick={handleLogout}>Logout</button>
             ) : (
