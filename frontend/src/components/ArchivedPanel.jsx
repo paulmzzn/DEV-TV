@@ -51,6 +51,17 @@ const ArchivedPanel = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const metaViewport = document.createElement('meta');
+    metaViewport.name = 'viewport';
+    metaViewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+    document.head.appendChild(metaViewport);
+
+    return () => {
+      document.head.removeChild(metaViewport);
+    };
+  }, []);
+
   const openCardPopup = (card) => {
     setSelectedCard(card);
     setShowCardPopup(true);

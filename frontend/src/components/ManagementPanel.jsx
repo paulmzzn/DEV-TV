@@ -129,6 +129,17 @@ const ManagementPanel = () => {
     };
   }, [showAccountMenu]);
 
+  useEffect(() => {
+    const metaViewport = document.createElement('meta');
+    metaViewport.name = 'viewport';
+    metaViewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+    document.head.appendChild(metaViewport);
+
+    return () => {
+      document.head.removeChild(metaViewport);
+    };
+  }, []);
+
   const addColumn = async () => {
     const token = localStorage.getItem('jwt_token');
     if (!token) {
@@ -566,10 +577,10 @@ const ManagementPanel = () => {
         )}
       </div>
       <div className="button-container">
-        <button className="btnGoToTV" onClick={() => window.location.href = '/tv.html'}>Go to TV Display</button>
-        <button className="btnGoToManagement" onClick={() => window.location.href = '/archive'}>Go to Archive</button>
+        <button className="btnGoToTV" onClick={() => window.location.href = '/tv.html'}>Affichage TV </button>
+        <button className="btnGoToManagement" onClick={() => window.location.href = '/archive'}>Archive</button>
       </div>
-      <button onClick={addColumn}>Add Column</button>
+      <button onClick={addColumn}>Ajout Colonne</button>
       <div className="columns">
         {filterTasks(columns).map((column, index) => (
           <div
@@ -593,7 +604,7 @@ const ManagementPanel = () => {
                     setShowCardForm(true);
                   }}
                 >
-                  Add Card +
+                  Ajout Carte +
                 </button>
               )}
               {isMobile ? (
@@ -631,10 +642,10 @@ const ManagementPanel = () => {
                             <p className="card-author">Auteur : <b>{card.author || '???'}</b></p>
                           <div className="card-buttons mobile-buttons">
                             <button className="btnupdatecard" onClick={() => openEditCardForm(card)}>
-                              Update Card
+                              Mettre à jour
                             </button>
                             <button className="btndeletecard" onClick={() => confirmArchiveCard(column._id, card._id)}>
-                              Archive Card
+                              Archiver
                             </button>
                           </div>
                         </div>
@@ -669,10 +680,10 @@ const ManagementPanel = () => {
                       <p className="card-author">Auteur : <b>{card.author || '???'}</b></p>
                     <div className="card-buttons">
                       <button className="btnupdatecard" onClick={() => openEditCardForm(card)}>
-                        Update Card
+                        Mettre à jour
                       </button>
                       <button className="btndeletecard" onClick={() => confirmArchiveCard(column._id, card._id)}>
-                        Archive Card
+                        Archiver 
                       </button>
                     </div>
                   </div>
@@ -688,7 +699,7 @@ const ManagementPanel = () => {
           className="btnAddCardSticky"
           onClick={handleAddCardClick}
         >
-          Add Card +
+          Ajout Carte +
         </button>
       )}
 
@@ -864,12 +875,12 @@ const ManagementPanel = () => {
             <label>
               Priorité :
               <div className="priority-buttons">
-                {[1, 2, 3, 4, 5].map((priority) => (
+                {['1', '2', '3', '4', '5'].map((priority) => (
                   <button
                     key={priority}
                     className={`priority-button ${editCardData.priority === priority ? 'selected' : ''}`}
                     onClick={() => handleEditPriorityClick(priority)}
-                    style={{ backgroundColor: priorityColors[priority] }}
+                    style={{ backgroundColor: priorityColors[priority], border: editCardData.priority === priority ? '2px solid blue' : '1px solid #ccc' }}
                   >
                     {priority}
                   </button>
