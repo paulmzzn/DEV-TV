@@ -57,8 +57,14 @@ const ArchivedPanel = () => {
     metaViewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
     document.head.appendChild(metaViewport);
 
+    const metaNoTranslate = document.createElement('meta');
+    metaNoTranslate.name = 'google';
+    metaNoTranslate.content = 'notranslate';
+    document.head.appendChild(metaNoTranslate);
+
     return () => {
       document.head.removeChild(metaViewport);
+      document.head.removeChild(metaNoTranslate);
     };
   }, []);
 
@@ -191,8 +197,8 @@ const ArchivedPanel = () => {
         )}
       </div>
       <div className="button-container">
-        <button className="btnGoToTV" onClick={() => window.location.href = '/tv.html'}>Go to TV Display</button>
-        <button className="btnGoToManagement" onClick={() => window.location.href = '/'}>Go to Management</button>
+        <button className="btnGoToTV" onClick={() => window.location.href = '/tv.html'}>Affichage TV</button>
+        <button className="btnGoToManagement" onClick={() => window.location.href = '/'}>Management</button>
       </div>
       <input
         type="text"

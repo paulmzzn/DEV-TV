@@ -135,8 +135,14 @@ const ManagementPanel = () => {
     metaViewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
     document.head.appendChild(metaViewport);
 
+    const metaNoTranslate = document.createElement('meta');
+    metaNoTranslate.name = 'google';
+    metaNoTranslate.content = 'notranslate';
+    document.head.appendChild(metaNoTranslate);
+
     return () => {
       document.head.removeChild(metaViewport);
+      document.head.removeChild(metaNoTranslate);
     };
   }, []);
 
