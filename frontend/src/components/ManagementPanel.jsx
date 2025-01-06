@@ -66,7 +66,7 @@ const ManagementPanel = () => {
         setShowLoginPopup(true);
         return;
       }
-      const response = await fetch('http://localhost:3000/api/columns', {
+      const response = await fetch('http://87.106.130.160/api/columns', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -160,7 +160,7 @@ const ManagementPanel = () => {
     const title = prompt('Enter column title:');
     if (!title) return;
 
-    const res = await fetch('http://localhost:3000/api/columns', {
+    const res = await fetch('http://87.106.130.160/api/columns', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -192,7 +192,7 @@ const ManagementPanel = () => {
     const id = columnToDelete;
     setShowDeleteColumnPopup(false);
     try {
-      await fetch(`http://localhost:3000/api/columns/${id}`, {
+      await fetch(`http://87.106.130.160/api/columns/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -218,7 +218,7 @@ const ManagementPanel = () => {
 
       // Archivez la carte dans votre base de données
       console.log(`Archivage de la carte avec l'ID: ${cardId}`);
-      const archiveResponse = await fetch(`http://localhost:3000/api/cards/${cardId}`, {
+      const archiveResponse = await fetch(`http://87.106.130.160/api/cards/${cardId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -277,7 +277,7 @@ const ManagementPanel = () => {
     };
   
     try {
-      const res = await fetch('http://localhost:3000/api/cards', {
+      const res = await fetch('http://87.106.130.160/api/cards', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -362,7 +362,7 @@ const ManagementPanel = () => {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:3000/api/cards/${cardId}`, {
+      const response = await fetch(`http://87.106.130.160/api/cards/${cardId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -404,7 +404,7 @@ const ManagementPanel = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:3000/api/cards/${editCardData.cardId}`, {
+      const res = await fetch(`http://87.106.130.160/api/cards/${editCardData.cardId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -452,7 +452,7 @@ const ManagementPanel = () => {
 
   const handleLoginSubmit = async (username, password) => {
     try {
-      const response = await fetch('http://localhost:3000/api/login', {
+      const response = await fetch('http://87.106.130.160/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
