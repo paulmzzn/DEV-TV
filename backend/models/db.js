@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const Card = require('./Card');
+const Column = require('./Column');
 
 const connect = async () => {
   try {
@@ -13,4 +15,8 @@ const connect = async () => {
   }
 };
 
-module.exports = { connect };
+module.exports = { 
+  connect,
+  Card,
+  Column
+};

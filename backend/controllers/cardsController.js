@@ -35,8 +35,11 @@ const updateCard = async (req, res) => {
     const { id } = req.params;
     const { content, title, link, columnId, author, status, societe, assigne, priority, archived } = req.body;
 
+    console.log(`Tentative de mise à jour de la carte avec l'ID: ${id}`);
+
     const card = await Card.findById(id);
     if (!card) {
+      console.error('Card not found');
       return res.status(404).json({ error: 'Card not found' });
     }
 
@@ -49,9 +52,7 @@ const updateCard = async (req, res) => {
     if (societe !== undefined) card.societe = societe;
     if (assigne !== undefined) card.assigne = assigne;
     if (priority !== undefined) card.priority = priority;
-    if (archived !== undefined) card.archived = archived
-
-
+    if (archived !== undefined) card.archived = archived;
 
     await card.save();
 

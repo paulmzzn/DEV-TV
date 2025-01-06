@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const db = require('./models/db');
 const { setupWebSocket } = require('./websocket/socket');
+const cron = require('node-cron');
+const axios = require('axios');
 
 dotenv.config();
 
@@ -78,6 +80,73 @@ app.get('/api/test', (req, res) => {
 app.use('/api' , loginRoutes);
 app.use('/api/columns', authMiddleware, columnsRoutes);
 app.use('/api/cards', authMiddleware, cardsRoutes);
+
+
+// Fonction pour vérifier les nouvelles commandes WooCommerce
+const checkNewOrders = async () => {
+    try {
+        const response = await axios.get('https://aleaulavage.com/wp-json/wc/v3/orders', {
+            auth: {
+                username: process.env.WC_CONSUMER_KEY,
+                password: process.env.WC_CONSUMER_SECRET
+            }
+        });
+
+        const orders = response.data;
+
+        const prepaCommandeColumnId = '675c36542c393909c784f275'; // Utilisez directement l'ID de la colonne "Prepa Commande"
+
+        for (const order of orders) {
+            // Ignorez les commandes avec le statut "completed"
+            if (order.status === 'completed') {
+                console.log(`Commande ${order.id} ignorée car elle est déjà complétée.`);
+                continue;
+            }
+
+            // Vérifiez si la commande existe déjà dans la base de données
+            const existingCard = await db.Card.findOne({ societe: order.id });
+            if (existingCard) {
+                console.log(`Commande ${order.id} déjà ajoutée.`);
+                continue;
+            }
+
+            // Préparez le contenu de la carte avec les articles de la commande
+            const content = order.line_items.map(item => `${item.name} *${item.quantity}`).join('\n');
+
+            // Préparez les données de la nouvelle carte
+            const newCard = {
+                title: `Commande #${order.id} ${order.billing.first_name} ${order.billing.last_name}`,
+                content: content,
+                columnId: prepaCommandeColumnId,
+                link: order.payment_url,
+                author: `WooCommerce`,
+                status: order.status,
+                assigne: 'Personne', // Vous pouvez modifier cette valeur si nécessaire
+                societe: order.id,
+                priority: '1', // Vous pouvez modifier cette valeur si nécessaire
+                archived: false
+            };
+            console.log('Nouvelle carte à ajouter:', newCard);
+
+            // Ajoutez la carte à la base de données
+            const createdCard = await db.Card.create(newCard);
+            console.log('Carte créée avec succès:', createdCard);
+
+            // Ajoutez l'ID de la carte à la colonne correspondante
+            const column = await db.Column.findById(prepaCommandeColumnId);
+            if (column) {
+                column.cards.push(createdCard._id);
+                await column.save();
+                console.log('Carte ajoutée à la colonne:', column);
+            }
+        }
+    } catch (error) {
+        console.error('Erreur lors de la vérification des nouvelles commandes WooCommerce:', error);
+    }
+};
+
+// Planifiez la tâche cron pour s'exécuter toutes les 30 minutes
+cron.schedule('*/15 * * * *', checkNewOrders);
 
 
 // Connexion à la base de données
