@@ -7,6 +7,7 @@ const db = require('./models/db');
 const { setupWebSocket } = require('./websocket/socket');
 const cron = require('node-cron');
 const axios = require('axios');
+const { extractDates, calculatePriority } = require('./utils/dateAnalyzer');
 
 dotenv.config();
 
@@ -148,6 +149,32 @@ const checkNewOrders = async () => {
 // Planifiez la tâche cron pour s'exécuter toutes les 30 minutes
 cron.schedule('*/15 * * * *', checkNewOrders);
 
+// Fonction pour analyser les dates et mettre à jour les priorités
+const updateCardPriorities = async () => {
+    try {
+        const cards = await db.Card.find({});
+        
+        for (const card of cards) {
+            // Rechercher une date uniquement dans le titre
+            const titleDate = extractDates(card.title);
+            
+            if (titleDate) {
+                const newPriority = calculatePriority(titleDate);
+                if (card.priority !== newPriority) {
+                    card.priority = newPriority;
+                    await card.save();
+                    console.log(`Priorité mise à jour pour la carte ${card._id}: ${newPriority}`);
+                }
+            }
+            // Si pas de date dans le titre, on ne fait rien et on garde la priorité existante
+        }
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour des priorités:', error);
+    }
+};
+
+// Ajouter le nouveau cron (exécution toutes les 30 secondes)
+cron.schedule('*/30 * * * * *', updateCardPriorities);
 
 // Connexion à la base de données
 db.connect();
