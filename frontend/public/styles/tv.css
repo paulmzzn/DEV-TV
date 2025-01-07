@@ -1,398 +1,212 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap');
 
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    display: flex;
-    flex-direction: column;
-    height: 107vh;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  margin: 0;
 }
 
-/* Style de la zone d'affichage de la TV */
+/* Layout Components */
 .tv-display {
-    flex: 1; /* Ensure the tv-display takes up available space */
-    display: flex;
-    justify-content: center;
-    padding: 5px;
-    background-color: #f4f4f4;
-    color: #101010;
-    flex-wrap: wrap; /* Permet de gérer l'affichage sur plusieurs lignes si nécessaire */
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  background-color: #f4f4f4;
+  color: #101010;
+  flex-wrap: wrap;
 }
 
-/* Style pour chaque colonne */
+/* Column Styles */
 .column {
-    background: #222;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    min-width: 150px; /* Limite la largeur minimale des colonnes */
-    flex: 1 1 200px; /* Les colonnes se redimensionnent dynamiquement */
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centrer les cartes à l'intérieur de la colonne */
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: relative; /* Position pour le bouton "Delete" */
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  min-width: 150px;
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  margin: 10px;
 }
 
-.column h2, .column h3 {
-    font-size: 1.5vw;
-    color: #000000;
-    margin-bottom: 10px;
-    font-weight: bold;
-    font-family: Poppins, sans-serif;
+.column h2 {
+  font-size: 1.5vw;
+  color: #000000;
+  margin-bottom: 10px;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 20px;
+  width: 100%;
+  text-align: center;
 }
 
-.column h3 {
-    font-size: 1.2em;
-    color: #333;
-    font-weight: 600;
-}
-
-/* Style pour la section des cartes à l'intérieur des colonnes */
+/* Card Styles */
 .cards {
-    margin: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    width: 100%; /* Assure que les cartes prennent toute la largeur de la colonne */
-    margin-bottom: 20px;
-    margin-top: 5px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Espace cohérent entre les cartes */
+  margin: 5px 0 20px;
 }
 
 .card {
-    background: #fff;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    position: relative;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    font-family: Poppins, sans-serif;
-    font-weight: 500;
-    font-size: 0.7em;
+  background: #fff;
+  padding: 5px 10px; /* Ajuster pour correspondre aux cartes réduites */
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  font-size: 0.7em;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .card:hover {
-    transform: translateY(-5px); /* Légère élévation au survol */
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Ombre plus forte au survol */
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Style des textes des cartes */
-.card p {
-    font-size: 0.8rem;
-    line-height: 1.2;
-    color: #000000;
-    white-space: pre-line; /* Conserve les retours à la ligne */
-}
-
+/* Card Elements */
 .card-title {
-    font-weight: bold;
-    margin-top: 0; /* Ajustez la marge supérieure pour aligner le titre */
-    text-decoration: underline;
-    text-align: left;  /* Justification à gauche */
-    margin-bottom: 0px;
-    width: 100%;  /* Ajouter cette ligne pour forcer la largeur du titre */
-    font-size: 1rem;
-}
-
-.card-content {
-    text-align: left;  /* Assurez-vous que le texte est bien aligné à gauche */
-    margin-bottom: 15px;
-    width: 100%;  /* Ajouter cette ligne pour forcer la largeur du contenu */
-}
-
-.card-author {
-    font-size: 0.7rem;
-    color: #555;
-    text-align: right;
-    margin-top: 5px;
+  font-weight: bold;
+  text-decoration: underline;
+  text-align: left;
+  margin: 0 0 5px;
+  font-size: 1rem;
+  width: 100%;
 }
 
 .card-footer {
-    display: flex;
-    justify-content: space-between; /* Espace entre le bouton et l'auteur */
-    align-items: center; /* Centrer verticalement */
-    margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
 }
 
+/* Card Container Minimization Styles */
 .card-container {
-    position: relative;
-    display: inline-block;
-    overflow: hidden;
+  width: 100%;
+  transition: all 0.3s ease;
+  margin-bottom: 5px; /* Espace cohérent entre les cartes */
+}
+
+.card-container.reduced {
+  margin-bottom: 5px;
 }
 
 .card-container.reduced .card {
-    height: 50px; /* Ajustez la hauteur selon vos besoins */
-    overflow: hidden;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  padding: 5px 10px;
 }
-  
+
 .card-container.reduced .card-title {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  font-size: 1rem; /* Taille du titre augmentée */
+  line-height: 1.2;
 }
-  
+
 .card-container.reduced .card-footer {
-    display: none;
+  display: none;
+}
+
+.card-container.reduced .card-content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  max-height: calc(100% - 1.5em); /* Ajuster pour laisser de la place pour le titre */
+  white-space: pre-wrap; /* Conserver les retours à la ligne */
+}
+
+.card-container.reduced:hover {
+  height: auto;
+  z-index: 10;
 }
 
 .card-container.reduced:hover .card {
-    height: auto; /* Expand the card to its normal height */
-    overflow: visible; /* Show the full content */
+  height: auto;
+  position: relative;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .card-container.reduced:hover .card-footer {
-    display: flex; /* Show the footer on hover */
+  display: flex;
 }
 
-.card-link {
-    text-decoration: none; /* Supprime le soulignement */
-    color: inherit; /* Hérite de la couleur du parent (par exemple, du texte de la carte) */
+.card-container.reduced:hover .card-content {
+  overflow: visible;
 }
 
-.card-link:hover {
-    text-decoration: none; /* Assurer qu'il n'y a pas de soulignement au survol */
-    color: inherit; /* Assurer que la couleur ne change pas au survol */
+/* Card Content Styles */
+.card-content {
+  white-space: pre-wrap; /* Conserver les retours à la ligne */
 }
 
-.delete-button, .btndeletecard, .btnDeleteColumn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background-color: red;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    line-height: 1; /* Assure que le "X" est centré verticalement */
-    padding: 0;
-}
-
-.delete-button:hover, .btndeletecard:hover, .btnDeleteColumn:hover {
-    background-color: darkred;
-}
-
-.btnDeleteColumn {
-    width: 22px; /* Largeur du bouton */
-    height: 22px; /* Hauteur du bouton */
-    font-size: 18px; /* Taille de la croix */
-    line-height: 22px; /* Centrer verticalement la croix */
-}
-
-.management-panel {
-    background-color: #f4f4f4;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.columns {
-    display: flex;
-    justify-content: center; /* Centre les colonnes horizontalement */
-    gap: 100vh; /* Espacement constant entre les colonnes */
-    flex-wrap: wrap; /* Permet de passer à la ligne si nécessaire */
-}
-
-/* Media queries pour responsive */
-@media (max-width: 768px) {
-    .tv-display {
-        padding: 10px;
-        flex-direction: column;
-        align-items: center; /* Aligner les colonnes verticalement sur les petits écrans */
-    }
-
-    .column {
-        width: 80%; /* Colonne plus large sur petits écrans */
-        margin-bottom: 20px;
-    }
-
-    .card {
-        padding: 15px;
-    }
-}
-
-/* Boutons génériques (sans classe spécifique) */
-button {
-    background-color: #28a745; /* Vert */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 8px 12px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease; /* Transition douce */
-}
-
-button:hover {
-    background-color: #218838; /* Vert foncé pour le hover */
-}
-
-button:focus {
-    outline: none; /* Supprimer le contour bleu par défaut */
-}
-
-button:active {
-    transform: scale(0.98); /* Légère réduction de taille lors du clic pour un effet visuel */
-}
-
-.popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-}
-
-.popup-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    width: 400px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.popup-content h3 {
-    margin-top: 0;
-    text-align: center;
-}
-
-.form-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-}
-
-input,
-textarea {
-    width: 95%;
-    padding: 8px;
-    margin-top: 5px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.btncancel {
-    background-color: #dc3545; /* Rouge */
-}
-
-.btncancel:hover {
-    background-color: #c82333; /* Rouge foncé pour le hover */
-}
-
-.btnupdatecard {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 5px;
-}
-
-.btnupdatecard:hover {
-    background-color: #2980b9;
-}
-
-.card-buttons {
-    display: flex;
-    justify-content: space-between; /* Espacement égal entre les boutons */
-    width: 100%; /* Prendre toute la largeur de la carte */
-    margin-top: 10px; /* Espacement au-dessus des boutons */
-    gap: 20%; /* Espacement entre les boutons */
-}
-
-.card-buttons button {
-    flex: 1; /* Chaque bouton prend une largeur égale */
-    padding: 5px 10px;
-    font-size: 0.9em;
-    cursor: pointer;
-}
-
-.card-buttons .btnupdatecard {
-    background-color: #4CAF50; /* Vert pour le bouton 'Update' */
-    color: white;
-}
-
-.card-buttons .btndeletecard {
-    background-color: #f44336; /* Rouge pour le bouton 'Delete' */
-    color: white;
-}
-
-.card-buttons button:hover {
-    opacity: 0.8; /* Légère transparence au survol */
-}
-
+/* Button Styles */
 .btn-status {
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
+  border: none;
+  padding: 7px;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.3s;
 }
 
 .btn-status-red {
-    background-color: red;
-    padding: 7px;
-    color: white;
-}
-
-.btn-status-red:hover {
-    background-color: darkred;
+  background-color: red;
 }
 
 .btn-status-green {
-    background-color: green;
-    padding: 7px;
-    color: white;
+  background-color: green;
 }
 
-.btn-status-green:hover {
-    background-color: darkgreen;
-    color: white;
+/* Popup Styles */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
 }
 
-.column.prepa-commande {
-    background-color: #B3E5FC; /* Bleu pastel */
-    margin-right: 20px;
+.popup-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.column.stock {
-    background-color: #C8E6C9; /* Vert pastel */
-    margin-right: 20px;
-}
-
-.column.inter {
-    background-color: #FFF9C4; /* Jaune pastel */
-    margin-right: 20px;
-}
-
-.column.rappel {
-    background-color: #fb8787; /* Rose pastel */
-}
-
-/* Style pour les cartes de la société "Thomas" */
-.card.company-thomas {
-    background-color: #d6d6d6; /* Gris */
-}
-
-footer {
-    text-align: center;
-    margin-top: 20px;
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tv-display {
+    flex-direction: column;
+    align-items: center;
     padding: 10px;
-    background-color: #f4f4f4;
-    border-top: 1px solid #ddd;
+  }
+
+  .column {
+    width: 90%;
+  }
 }
+
+/* Column Colors */
+.column.prepa-commande { border-color: #B3E5FC; }
+.column.stock { border-color: #C8E6C9; }
+.column.inter { border-color: #FFF9C4; }
+.column.rappel { border-color: #fb8787; }

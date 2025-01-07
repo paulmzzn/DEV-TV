@@ -8,10 +8,9 @@
 </head>
 <body>
   <div id="tv-display" class="tv-display"></div>
-  <footer style="text-align: center; margin-top: 20px;">
-    <button onclick="window.location.href='/manage'">Go to Management Page</button>
-  </footer>
+  
 
+  <!-- Popups -->
   <div id="popup-overlay" class="popup-overlay" style="display: none;">
     <div class="popup-content">
       <h3>Entrez votre nom</h3>
@@ -47,30 +46,60 @@
 
   <script>
     (function () {
-      const tvDisplay = document.getElementById('tv-display');
-      const popupOverlay = document.getElementById('popup-overlay');
-      const loginPopup = document.getElementById('login-popup');
-      const deleteCardPopup = document.getElementById('delete-card-popup');
-      const submitBtn = document.getElementById('submit-btn');
-      const cancelBtn = document.getElementById('cancel-btn');
-      const loginSubmitBtn = document.getElementById('login-submit-btn');
-      const loginCancelBtn = document.getElementById('login-cancel-btn');
-      const deleteCardCancelBtn = document.getElementById('delete-card-cancel-btn');
-      const deleteCardConfirmBtn = document.getElementById('delete-card-confirm-btn');
-      let currentCardId = null;
-      let cardToDelete = { columnId: null, cardId: null };
-
-      const showLoginPopup = () => {
-        loginPopup.style.display = 'flex';
+      const elements = {
+        tvDisplay: document.getElementById('tv-display'),
+        popups: {
+          overlay: document.getElementById('popup-overlay'),
+          login: document.getElementById('login-popup'),
+          deleteCard: document.getElementById('delete-card-popup')
+        },
+        buttons: {
+          submit: document.getElementById('submit-btn'),
+          cancel: document.getElementById('cancel-btn'),
+          loginSubmit: document.getElementById('login-submit-btn'),
+          loginCancel: document.getElementById('login-cancel-btn'),
+          deleteCardCancel: document.getElementById('delete-card-cancel-btn'),
+          deleteCardConfirm: document.getElementById('delete-card-confirm-btn')
+        }
       };
 
-      loginSubmitBtn.addEventListener('click', async () => {
+      const state = {
+        currentCardId: null,
+        cardToDelete: { columnId: null, cardId: null }
+      };
+
+      const config = {
+        apiUrl: 'http://87.106.130.160/api',
+        refreshInterval: 20000,
+        pageReloadInterval: 600000,
+        colors: {
+          priority: {
+            1: '#D4EDDA',
+            2: '#A9DFBF',
+            3: '#F9E79F',
+            4: '#F5CBA7',
+            5: '#F1948A'
+          },
+          columns: {
+            'prepa-commande': '#B3E5FC',
+            'stock': '#C8E6C9',
+            'inter': '#FFF9C4',
+            'rappel': '#fb8787'
+          }
+        }
+      };
+
+      const showLoginPopup = () => {
+        elements.popups.login.style.display = 'flex';
+      };
+
+      elements.buttons.loginSubmit.addEventListener('click', async () => {
         const username = document.getElementById('login-username').value.trim();
         const password = document.getElementById('login-password').value.trim();
 
         if (username && password) {
           try {
-            const response = await fetch('http://87.106.130.160/api/login', {
+            const response = await fetch(`${config.apiUrl}/login`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ username, password })
@@ -80,7 +109,7 @@
 
             if (response.ok) {
               localStorage.setItem('jwt_token', result.token);
-              loginPopup.style.display = 'none';
+              elements.popups.login.style.display = 'none';
               fetchColumns();
             } else {
               alert(result.message);
@@ -91,14 +120,14 @@
         }
       });
 
-      loginCancelBtn.addEventListener('click', () => {
-        loginPopup.style.display = 'none';
+      elements.buttons.loginCancel.addEventListener('click', () => {
+        elements.popups.login.style.display = 'none';
       });
 
       const fetchColumns = async () => {
         try {
           const token = localStorage.getItem('jwt_token');
-          const response = await fetch('http://87.106.130.160/api/columns', {
+          const response = await fetch(`${config.apiUrl}/columns`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           const columns = await response.json();
@@ -118,7 +147,7 @@
       const deleteCard = async () => {
         try {
           const token = localStorage.getItem('jwt_token');
-          await fetch(`http://87.106.130.160/api/cards/${cardToDelete.cardId}`, {
+          await fetch(`${config.apiUrl}/cards/${state.cardToDelete.cardId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
           });
@@ -132,7 +161,7 @@
       const updateCardStatus = async (cardId, newStatus) => {
         try {
           const token = localStorage.getItem('jwt_token');
-          const response = await fetch(`http://87.106.130.160/api/cards/${cardId}`, {
+          const response = await fetch(`${config.apiUrl}/cards/${cardId}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -152,28 +181,13 @@
         }
       };
 
-      const priorityColors = {
-        1: '#D4EDDA',
-        2: '#A9DFBF',
-        3: '#F9E79F',
-        4: '#F5CBA7',
-        5: '#F1948A'
-      };
-
-      const columnColors = {
-        'prepa-commande': '#B3E5FC', // Bleu pastel
-        'stock': '#C8E6C9', // Vert pastel
-        'inter': '#FFF9C4', // Jaune pastel
-        'rappel': '#fb8787' // Rose pastel
-      };
-
       const sortCards = (cards) => {
         return cards.sort((a, b) => b.priority - a.priority);
       };
 
       const updateUI = (columns) => {
         console.log('Updating UI...');
-        tvDisplay.innerHTML = ''; // Réinitialise l'affichage
+        elements.tvDisplay.innerHTML = ''; // Réinitialise l'affichage
         columns.forEach(column => {
           console.log(`Processing column: ${column.title}`);
           const columnElement = document.createElement('div');
@@ -182,11 +196,11 @@
 
           const columnClass = column.title.replace(/\s+/g, '-').toLowerCase();
           columnElement.classList.add(columnClass);
-          columnElement.style.border = `7px solid ${columnColors[columnClass] || '#ccc'}`; // Set column border color
+          columnElement.style.border = `7px solid ${config.colors.columns[columnClass] || '#ccc'}`; // Set column border color
 
           const titleElement = document.createElement('h2');
           titleElement.innerText = column.title;
-          titleElement.style.backgroundColor = columnColors[columnClass] || '#ccc'; // Set title background color
+          titleElement.style.backgroundColor = config.colors.columns[columnClass] || '#ccc'; // Set title background color
           titleElement.style.borderRadius = '20px'; // Make the background oblong
           titleElement.style.padding = '10px'; // Add padding to the title
           titleElement.style.color = 'black'; // Set title text color to white
@@ -203,20 +217,12 @@
             const cardContainer = document.createElement('div');
             cardContainer.className = 'card-container';
 
-            const deleteButton = document.createElement('button');
-            deleteButton.className = 'btndeletecard';
-            deleteButton.innerHTML = '&times;';
-            deleteButton.addEventListener('click', () => {
-              cardToDelete = { columnId: column._id, cardId: card._id };
-              deleteCardPopup.style.display = 'flex';
-            });
-
             const cardElement = document.createElement('div');
             cardElement.className = 'card';
-            cardElement.style.backgroundColor = priorityColors[card.priority];
+            cardElement.style.backgroundColor = config.colors.priority[card.priority];
             cardElement.innerHTML = `
               <h4 class="card-title">${card.title}</h4>
-              <p>${card.content}</p>
+              <p class="card-content">${card.content}</p>
               <div class="card-footer">
                 <button class="btn-status ${card.status === 'À faire' ? 'btn-status-red' : 'btn-status-green'}"><b>${card.status || '???'}</b></button>
                 <div>
@@ -238,69 +244,93 @@
               console.log(`Status button clicked for card ${card._id}...`);
               if (card.status === 'À faire') {
                 console.log('Card is available. Showing popup...');
-                popupOverlay.style.display = 'flex';
-                currentCardId = card._id;
+                elements.popups.overlay.style.display = 'flex';
+                state.currentCardId = card._id;
               }
             });
 
             cardContainer.appendChild(cardElement);
-            cardContainer.appendChild(deleteButton);
             cardsContainer.appendChild(cardContainer);
           });
 
-          columnElement.appendChild(cardsContainer);
-          tvDisplay.appendChild(columnElement);
-
-          // Check if total height of cards exceeds screen size and add 'reduced' class if necessary
-          if (window.innerWidth >= 1920 && window.innerHeight >= 1080) { // Apply only on 3840x2160 screens
-            let totalHeight = 0;
+          // Logique de minimisation améliorée
+          const calculateAndAdjustCards = () => {
+            const viewportHeight = window.innerHeight;
+            const columnTop = columnElement.getBoundingClientRect().top;
+            const titleHeight = titleElement.offsetHeight;
+            const padding = 20; // Padding entre les cartes
+            const extraSpacePerCard = 5; // Espace supplémentaire par carte
+            const availableHeight = viewportHeight - columnTop - titleHeight - 50; // 50px margin
             const cardContainers = cardsContainer.querySelectorAll('.card-container');
-            cardContainers.forEach(cardContainer => {
-              totalHeight += cardContainer.scrollHeight;
-            });
+            const totalCardsHeight = Array.from(cardContainers).reduce((sum, container) => {
+              return sum + container.scrollHeight;
+            }, 0);
 
-            if (totalHeight > window.innerHeight) {
+            // Si la hauteur totale dépasse l'espace disponible, on réduit toutes les cartes
+            if (totalCardsHeight > availableHeight) {
+              const numberOfCards = cardContainers.length;
+              const newCardHeight = Math.min((availableHeight - (padding * (numberOfCards - 1))) / numberOfCards + extraSpacePerCard, 100); // Limite la hauteur maximale à 100px
+
               cardContainers.forEach(cardContainer => {
+                cardContainer.style.height = `${newCardHeight}px`;
                 cardContainer.classList.add('reduced');
               });
+
+              // Forcer un recalcul du layout
+              columnElement.style.display = 'none';
+              columnElement.offsetHeight; // Force reflow
+              columnElement.style.display = '';
             }
-          }
+          };
+
+          // Exécuter le calcul après un court délai pour s'assurer que le DOM est mis à jour
+          setTimeout(calculateAndAdjustCards, 100);
+
+          columnElement.appendChild(cardsContainer);
+          elements.tvDisplay.appendChild(columnElement);
+
+          // Attendre que toutes les images soient chargées avant de calculer
+          Promise.all(Array.from(columnElement.getElementsByTagName('img'))
+            .map(img => img.complete ? Promise.resolve() : new Promise(resolve => img.onload = resolve)))
+            .then(() => {
+              calculateAndAdjustCards();
+            });
         });
         console.log('UI updated.');
       };
 
-      submitBtn.addEventListener('click', () => {
+      elements.buttons.submit.addEventListener('click', () => {
         const username = document.getElementById('username-input').value.trim();
-        console.log(`Submit button clicked. Username: ${username}, currentCardId: ${currentCardId}`);
-        if (username && currentCardId) {
-          updateCardStatus(currentCardId, `En cours : ${username}`);
-          popupOverlay.style.display = 'none';
+        console.log(`Submit button clicked. Username: ${username}, currentCardId: ${state.currentCardId}`);
+        if (username && state.currentCardId) {
+          updateCardStatus(state.currentCardId, `En cours : ${username}`);
+          elements.popups.overlay.style.display = 'none';
           document.getElementById('username-input').value = '';
         }
       });
 
-      cancelBtn.addEventListener('click', () => {
+      elements.buttons.cancel.addEventListener('click', () => {
         console.log('Cancel button clicked.');
-        popupOverlay.style.display = 'none';
+        elements.popups.overlay.style.display = 'none';
         document.getElementById('username-input').value = '';
       });
 
-      deleteCardCancelBtn.addEventListener('click', () => {
-        deleteCardPopup.style.display = 'none';
+      elements.buttons.deleteCardCancel.addEventListener('click', () => {
+        elements.popups.deleteCard.style.display = 'none';
       });
 
-      deleteCardConfirmBtn.addEventListener('click', () => {
+      elements.buttons.deleteCardConfirm.addEventListener('click', () => {
         deleteCard();
-        deleteCardPopup.style.display = 'none';
+        elements.popups.deleteCard.style.display = 'none';
       });
 
       fetchColumns();
-      setInterval(fetchColumns, 20000);
+      setInterval(fetchColumns, config.refreshInterval);
 
-      // Refresh the page every 10 minutes (1200000 milliseconds)
+      // Refresh the page every 10 minutes (600000 milliseconds)
       setInterval(() => {
         location.reload();
-      }, 600000);
+      }, config.pageReloadInterval);
     })();
   </script>
 </body>
