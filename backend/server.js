@@ -147,7 +147,7 @@ const checkNewOrders = async () => {
 };
 
 // Planifiez la tâche cron pour s'exécuter toutes les 30 minutes
-cron.schedule('*/15 * * * *', checkNewOrders);
+cron.schedule('*/30 * * * *', checkNewOrders);
 
 // Fonction pour analyser les dates et mettre à jour les priorités
 const updateCardPriorities = async () => {
@@ -173,8 +173,8 @@ const updateCardPriorities = async () => {
     }
 };
 
-// Ajouter le nouveau cron (exécution toutes les 30 secondes)
-cron.schedule('*/30 * * * * *', updateCardPriorities);
+// Ajouter le nouveau cron (exécution toutes les heures)
+cron.schedule('0 * * * *', updateCardPriorities);
 
 // Connexion à la base de données
 db.connect();
